@@ -1,6 +1,7 @@
 package com.example.system.Enum;
 
-public enum Role {
+public enum RoleName {
+    OWNER,
     ADMIN,
     DOCTOR,
     PATIENT ;
