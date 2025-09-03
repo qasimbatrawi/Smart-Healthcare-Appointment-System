@@ -8,5 +8,4 @@ import java.util.Optional;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Optional<Doctor> findByDoctorDetails_Username(String username) ;
-    void deleteByDoctorDetails_Username(String username) ;
 }

@@ -1,13 +1,9 @@
 package com.example.system.service;
 
 import com.example.system.Enum.RoleName;
-import com.example.system.entity.Doctor;
-import com.example.system.entity.Role;
-import com.example.system.entity.Specialty;
-import com.example.system.repository.DoctorRepository;
-import com.example.system.repository.PatientRepository;
-import com.example.system.repository.RoleRepository;
-import com.example.system.repository.SpecialtyRepository;
+import com.example.system.dto.DoctorDTO;
+import com.example.system.entity.*;
+import com.example.system.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,39 +18,46 @@ public class AdminService {
     private PatientRepository patientRepository ;
     private RoleRepository roleRepository ;
     private SpecialtyRepository specialtyRepository ;
+    private UserRepository userRepository ;
 
     public AdminService (DoctorRepository doctorRepository ,
                          PatientRepository patientRepository ,
                          RoleRepository roleRepository,
-                         SpecialtyRepository specialtyRepository){
+                         SpecialtyRepository specialtyRepository,
+                         UserRepository userRepository){
         this.doctorRepository = doctorRepository ;
         this.patientRepository = patientRepository ;
         this.roleRepository = roleRepository ;
         this.specialtyRepository = specialtyRepository ;
+        this.userRepository = userRepository ;
     }
 
-    public Doctor addNewDoctor(Doctor doctor){
+    public Doctor addNewDoctor(DoctorDTO doctor){
 
-        // Check if the role exists in the db
-        Role role = roleRepository.findByRoleName(doctor.getDoctorDetails().getRole().getRoleName())
-                .orElseThrow(() -> new RuntimeException("Role not found")); // problem here: exception is not caught
-
-        if (role.getRoleName() != RoleName.DOCTOR){
-            throw new RuntimeException("Role must be a Doctor") ;
-        }
-
-        doctor.getDoctorDetails().setRole(role);
+        Doctor newDoctor = new Doctor() ;
+        User newUser = new User() ;
 
         // Check if all specialties exist in the db
         Set<Specialty> specialties = doctor.getSpecialty().stream()
-                .map(s -> specialtyRepository.findBySpecialtyName(s.getSpecialtyName())
-                        .orElseThrow(() -> new NullPointerException("Specialty not found"))) // problem here: exception is not caught
+                .map(s -> {
+                    return specialtyRepository.findBySpecialtyName(s.getSpecialtyName());
+                })
                 .collect(Collectors.toSet());
 
-        doctor.setSpecialty(specialties);
+        Role role = roleRepository.findByRoleName(RoleName.DOCTOR) ;
+
+        newUser.setUsername(doctor.getUsername());
+        newUser.setName(doctor.getName());
+        newUser.setPassword(doctor.getPassword());
+        newUser.setEmail(doctor.getEmail());
+        newUser.setRole(role);
+
+        newDoctor.setSpecialty(specialties);
+        newDoctor.setDoctorDetails(newUser);
 
         try {
-            return doctorRepository.save(doctor);
+            userRepository.save(newUser) ;
+            return doctorRepository.save(newDoctor);
         } catch (Exception e){
             throw new RuntimeException("Invalid email format. Email or username is used. Fields must not be empty.");
         }
@@ -69,33 +72,24 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("Doctor not found")) ;
     }
 
-    public Doctor updateDoctorByUsername(String username , Doctor newDoctorDetails){
+    public Doctor updateDoctorByUsername(String username , DoctorDTO newDoctorDetails){
+
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        String newUsername = newDoctorDetails.getDoctorDetails().getUsername() ;
-        String newEmail = newDoctorDetails.getDoctorDetails().getEmail() ;
-        String newName = newDoctorDetails.getDoctorDetails().getName() ;
-        String newPassword = newDoctorDetails.getDoctorDetails().getPassword() ;
-
-        // Check if the role exists
-        Role newRole = roleRepository.findByRoleName(newDoctorDetails.getDoctorDetails().getRole().getRoleName())
-                .orElseThrow(() -> new NullPointerException("Role not found")); // problem here: exception is not caught
-
-        if (newRole.getRoleName() != RoleName.DOCTOR){
-            throw new RuntimeException("Role must be a Doctor") ;
-        }
-
-        doctor.getDoctorDetails().setRole(newRole);
+        String newUsername = newDoctorDetails.getUsername() ;
+        String newEmail = newDoctorDetails.getEmail() ;
+        String newName = newDoctorDetails.getName() ;
+        String newPassword = newDoctorDetails.getPassword() ;
 
         // Check if all specialties exist
-        Set<Specialty> newSpecialties = newDoctorDetails.getSpecialty().stream()
-                .map(s -> specialtyRepository.findBySpecialtyName(s.getSpecialtyName())
-                        .orElseThrow(() -> new NullPointerException("Specialty not found"))) // problem here: exception is not caught
+        Set<Specialty> newSpecialties = doctor.getSpecialty().stream()
+                .map(s -> {
+                    return specialtyRepository.findBySpecialtyName(s.getSpecialtyName());
+                })
                 .collect(Collectors.toSet());
 
         doctor.setSpecialty(newSpecialties);
-
         doctor.getDoctorDetails().setUsername(newUsername) ;
         doctor.getDoctorDetails().setEmail(newEmail) ;
         doctor.getDoctorDetails().setName(newName) ;
@@ -112,6 +106,5 @@ public class AdminService {
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
         doctorRepository.delete(doctor);
-
     }
 }

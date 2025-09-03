@@ -2,7 +2,12 @@ package com.example.system.entity;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
+import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Data
 @Entity
 public class Patient {
 
@@ -14,11 +19,7 @@ public class Patient {
     @JoinColumn(name = "user_id")
     private User patientDetails ;
 
-
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
-
-    public User getPatientDetails() { return patientDetails; }
-    public void setPatientDetails(User patientDetails) { this.patientDetails = patientDetails; }
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private Set<Appointment> appointments = new HashSet<>();
 
 }

@@ -28,21 +28,13 @@ public class SystemApplication implements CommandLineRunner{
 	@Override
 	public void run(String... args) {
 		for (RoleName roleName : RoleName.values()) {
-			roleRepository.findByRoleName(roleName)
-					.orElseGet(() -> {
-						Role role = new Role();
-						role.setRoleName(roleName);
-						return roleRepository.save(role);
-					});
+			Role role = roleRepository.findByRoleName(roleName);
+			roleRepository.save(role);
 		}
 
 		for (SpecialtyName specialtyName : SpecialtyName.values()){
-			specialtyRepository.findBySpecialtyName(specialtyName)
-					.orElseGet(() -> {
-						Specialty specialty = new Specialty() ;
-						specialty.setSpecialtyName(specialtyName);
-						return specialtyRepository.save(specialty) ;
-					});
+			Specialty specialty = specialtyRepository.findBySpecialtyName(specialtyName);
+			specialtyRepository.save(specialty);
 		}
 	}
 

@@ -1,12 +1,12 @@
 package com.example.system.controller;
 
+import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.Doctor;
 import com.example.system.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/admin")
@@ -19,7 +19,7 @@ public class AdminController {
     }
 
     @PostMapping("/new_doctor")
-    public ResponseEntity<Object> addNewDoctor(@RequestBody Doctor doctor){
+    public ResponseEntity<Object> addNewDoctor(@RequestBody DoctorDTO doctor){
         try {
             Doctor newDoctor = adminService.addNewDoctor(doctor);
             return ResponseEntity.ok(newDoctor) ;
@@ -44,7 +44,7 @@ public class AdminController {
     }
 
     @PutMapping("/doctor/{username}")
-    public ResponseEntity<Object> updateDoctorByUsername(@PathVariable String username , @RequestBody Doctor newDoctorDetails){
+    public ResponseEntity<Object> updateDoctorByUsername(@PathVariable String username , @RequestBody DoctorDTO newDoctorDetails){
         try {
             Doctor doctor = adminService.updateDoctorByUsername(username, newDoctorDetails);
             return ResponseEntity.ok(doctor) ;
