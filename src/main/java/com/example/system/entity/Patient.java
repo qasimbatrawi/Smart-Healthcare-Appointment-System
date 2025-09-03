@@ -1,14 +1,24 @@
 package com.example.system.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import lombok.Data;
+import jakarta.persistence.*;
+import jakarta.persistence.Id;
 
-@Data
 @Entity
 public class Patient {
 
-    @OneToOne
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @OneToOne(cascade = CascadeType.ALL) // update other classes when modifying User
+    @JoinColumn(name = "user_id")
     private User patientDetails ;
+
+
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public User getPatientDetails() { return patientDetails; }
+    public void setPatientDetails(User patientDetails) { this.patientDetails = patientDetails; }
 
 }
