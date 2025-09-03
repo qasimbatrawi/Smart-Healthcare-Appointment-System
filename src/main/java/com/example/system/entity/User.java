@@ -17,15 +17,17 @@ public class User {
     @Email(message = "Invalid email format")
     private String email ;
 
+    @Column(nullable = false)
     private String password ;
 
+    @Column(nullable = false)
     private String name ;
 
     @ManyToOne // each user has one role, and many users can share the same role
     @JoinColumn(name = "role_id", nullable = false)
     private Role role ;
 
-    
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

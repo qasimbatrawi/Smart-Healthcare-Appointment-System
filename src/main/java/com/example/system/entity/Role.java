@@ -4,6 +4,7 @@ import com.example.system.Enum.RoleName;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "_role")
 public class Role {
 
     @Id

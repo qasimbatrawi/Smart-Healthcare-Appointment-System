@@ -2,6 +2,7 @@ package com.example.system.entity;
 
 import jakarta.persistence.*;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,7 @@ public class Doctor {
     private User doctorDetails ;
 
     @ManyToMany
+    @NotEmpty(message = "Doctor must have at least one specialty")
     private Set<Specialty> specialty = new HashSet<>();
 
 
