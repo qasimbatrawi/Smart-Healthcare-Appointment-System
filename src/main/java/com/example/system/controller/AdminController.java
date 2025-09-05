@@ -43,6 +43,7 @@ public class AdminController {
         }
     }
 
+
     @PatchMapping("/doctor/{username}")
     public ResponseEntity<Object> updateDoctorByUsername(@PathVariable String username , @RequestBody DoctorDTO newDoctorDetails){
         try {

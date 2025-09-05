@@ -1,12 +1,9 @@
 package com.example.system.dto;
 
-import com.example.system.entity.Specialty;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +23,7 @@ public class DoctorDTO {
     private String name ;
 
     @NotEmpty
-    private Set<Specialty> specialty = new HashSet<>();
+    private Set<SpecialtyDTO> specialty = new HashSet<>();
 
     @NotNull
     private Integer workDayStart ;

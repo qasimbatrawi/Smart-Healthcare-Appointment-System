@@ -1,12 +1,12 @@
 package com.example.system.service;
 
 import com.example.system.Enum.RoleName;
+import com.example.system.Enum.SpecialtyName;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.*;
 import com.example.system.repository.*;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
@@ -36,22 +36,28 @@ public class AdminService {
 
     public Doctor addNewDoctor(DoctorDTO doctor){
 
+        if (doctor.getWorkDayStart() == null || doctor.getWorkDayEnd() == null
+                || doctor.getName() == null || doctor.getPassword() == null
+                || doctor.getEmail() == null || doctor.getUsername() == null
+                || doctor.getSpecialty() == null || doctor.getSpecialty().isEmpty()){
+            throw new RuntimeException("Fields must not be empty.") ;
+        }
+
         Doctor newDoctor = new Doctor() ;
         User newUser = new User() ;
 
-        // Check if all specialties exist in the db
+        // map entered specialties to objects
         Set<Specialty> specialties = doctor.getSpecialty().stream()
+                .map(s -> s.getSpecialtyName()) // map specialtyDTO to string
                 .map(s -> {
-                    return specialtyRepository.findBySpecialtyName(s.getSpecialtyName());
-                })
+                    try {
+                        return SpecialtyName.valueOf(s.toUpperCase());
+                    } catch (Exception e){
+                        throw new RuntimeException("Invalid Specialty.") ;
+                    }
+                }) // try to map to Enum
+                .map(specialty -> specialtyRepository.findBySpecialtyName(specialty)) // map to Specialty object
                 .collect(Collectors.toSet());
-
-        if (doctor.getWorkDayStart() == null || doctor.getWorkDayEnd() == null
-            || doctor.getName() == null || doctor.getPassword() == null
-            || doctor.getEmail() == null || doctor.getUsername() == null
-            || doctor.getSpecialty().isEmpty()){
-            throw new RuntimeException("Fields must not be empty.") ;
-        }
 
         if (doctor.getWorkDayStart() < 0 || doctor.getWorkDayEnd() < 0
             || doctor.getWorkDayStart() >= 24 || doctor.getWorkDayEnd() >= 24){
@@ -68,8 +74,8 @@ public class AdminService {
 
         newDoctor.setSpecialty(specialties);
         newDoctor.setDoctorDetails(newUser);
-        newDoctor.setWorkDayStart(LocalTime.of(doctor.getWorkDayStart() , 0));
-        newDoctor.setWorkDayEnd(LocalTime.of(doctor.getWorkDayEnd() , 0));
+        newDoctor.setWorkDayStart(LocalTime.of(doctor.getWorkDayStart() ,0));
+        newDoctor.setWorkDayEnd(LocalTime.of(doctor.getWorkDayEnd() ,0));
 
         try {
             userRepository.save(newUser) ;
@@ -105,11 +111,17 @@ public class AdminService {
             throw new RuntimeException("Fields must not be empty.") ;
         }
 
-        // Check if all specialties exist
-        Set<Specialty> newSpecialties = doctor.getSpecialty().stream()
+        // map entered specialties to objects
+        Set<Specialty> newSpecialties = newDoctorDetails.getSpecialty().stream()
+                .map(s -> s.getSpecialtyName()) // map specialtyDTO to string
                 .map(s -> {
-                    return specialtyRepository.findBySpecialtyName(s.getSpecialtyName());
-                })
+                    try {
+                        return SpecialtyName.valueOf(s.toUpperCase());
+                    } catch (Exception e){
+                        throw new RuntimeException("Invalid Specialty.") ;
+                    }
+                }) // try to map to Enum
+                .map(specialty -> specialtyRepository.findBySpecialtyName(specialty)) // map to Specialty object
                 .collect(Collectors.toSet());
 
         doctor.setSpecialty(newSpecialties);

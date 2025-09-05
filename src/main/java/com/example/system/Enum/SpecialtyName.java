@@ -2,5 +2,9 @@ package com.example.system.Enum;
 
 public enum SpecialtyName {
     GOOD,
-    BAD
+    BAD ;
+
+    public String getName(SpecialtyName specialtyName){
+        return specialtyName.name() ;
+    }
 }
