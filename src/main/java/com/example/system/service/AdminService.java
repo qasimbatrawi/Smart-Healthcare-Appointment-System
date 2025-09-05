@@ -5,7 +5,9 @@ import com.example.system.Enum.SpecialtyName;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.*;
 import com.example.system.repository.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -136,6 +138,15 @@ public class AdminService {
             return doctorRepository.save(doctor);
         } catch (Exception e){
             throw new RuntimeException("Invalid email format. Email or username is used.");
+        }
+    }
+
+    public List<Doctor> getDoctorBySpecialty(String specialtyName){
+        try {
+            SpecialtyName specialtyEnum = SpecialtyName.valueOf(specialtyName.toUpperCase());
+            return doctorRepository.findBySpecialty_SpecialtyName(specialtyEnum) ;
+        } catch (Exception e){
+            throw new RuntimeException("Invalid Specialty.") ;
         }
     }
 

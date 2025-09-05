@@ -33,7 +33,7 @@ public class AdminController {
         return adminService.getAllDoctors() ;
     }
 
-    @GetMapping("/doctor/{username}")
+    @GetMapping("/doctor/username/{username}")
     public ResponseEntity<Object> getDoctorByUsername(@PathVariable String username){
         try {
             Doctor doctor = adminService.getDoctorByUsername(username);
@@ -43,6 +43,15 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/doctor/specialty/{specialtyName}")
+    public ResponseEntity<Object> getDoctorBySpecialty(@PathVariable String specialtyName){
+        try {
+            List<Doctor> doctors = adminService.getDoctorBySpecialty(specialtyName);
+            return ResponseEntity.ok(doctors) ;
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
 
     @PatchMapping("/doctor/{username}")
     public ResponseEntity<Object> updateDoctorByUsername(@PathVariable String username , @RequestBody DoctorDTO newDoctorDetails){
