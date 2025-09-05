@@ -1,0 +1,126 @@
+package com.example.system.service;
+
+import com.example.system.Enum.RoleName;
+import com.example.system.dto.UserDTO;
+import com.example.system.entity.Role;
+import com.example.system.entity.User;
+import com.example.system.repository.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
+
+@Service
+public class OwnerService {
+
+    private RoleRepository roleRepository ;
+    private UserRepository userRepository ;
+
+    public OwnerService (RoleRepository roleRepository,
+                         UserRepository userRepository){
+        this.roleRepository = roleRepository ;
+        this.userRepository = userRepository ;
+    }
+
+    public User getOwner(){
+        return userRepository.findByRole_RoleName(RoleName.OWNER).getFirst() ;
+    }
+
+    public User updateOwner(UserDTO newOwnerDetails){
+
+        User owner = userRepository.findByRole_RoleName(RoleName.OWNER).getFirst() ;
+
+        String newUsername = newOwnerDetails.getUsername() ;
+        String newEmail = newOwnerDetails.getEmail() ;
+        String newName = newOwnerDetails.getName() ;
+        String newPassword = newOwnerDetails.getPassword() ;
+
+        if (newUsername == null || newEmail == null || newName == null || newPassword == null){
+            throw new RuntimeException("Fields must not be empty.") ;
+        }
+
+        owner.setUsername(newUsername) ;
+        owner.setEmail(newEmail) ;
+        owner.setName(newName) ;
+        owner.setPassword(newPassword) ;
+
+        try {
+            return userRepository.save(owner);
+        } catch (Exception e){
+            throw new RuntimeException("Invalid email format. Email or username is used.");
+        }
+    }
+
+    public User addNewAdmin(UserDTO user){
+
+        User newUser = new User() ;
+
+        if (user.getName() == null || user.getPassword() == null
+                || user.getEmail() == null || user.getUsername() == null){
+            throw new RuntimeException("Fields must not be empty.") ;
+        }
+
+        Role role = roleRepository.findByRoleName(RoleName.ADMIN) ;
+
+        newUser.setUsername(user.getUsername());
+        newUser.setName(user.getName());
+        newUser.setPassword(user.getPassword());
+        newUser.setEmail(user.getEmail());
+        newUser.setRole(role);
+
+        try {
+            return userRepository.save(newUser) ;
+        } catch (Exception e){
+            throw new RuntimeException("Invalid email format. Email or username is used.");
+        }
+    }
+
+    public List<User> getAllAdmins(){
+        return userRepository.findByRole_RoleName(RoleName.ADMIN) ;
+    }
+
+    public User getAdminByUsername(String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Admin not found")) ;
+
+        if (user.getRole().getRoleName() != RoleName.ADMIN){
+            throw new RuntimeException(username + " is not admin") ;
+        }
+
+        return user ;
+    }
+
+    public User updateAdminByUsername(String username , UserDTO newUserDetails){
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        String newUsername = newUserDetails.getUsername() ;
+        String newEmail = newUserDetails.getEmail() ;
+        String newName = newUserDetails.getName() ;
+        String newPassword = newUserDetails.getPassword() ;
+
+        if (newUsername == null || newEmail == null || newName == null || newPassword == null){
+            throw new RuntimeException("Fields must not be empty.") ;
+        }
+
+        user.setUsername(newUsername) ;
+        user.setEmail(newEmail) ;
+        user.setName(newName) ;
+        user.setPassword(newPassword) ;
+
+        try {
+            return userRepository.save(user);
+        } catch (Exception e){
+            throw new RuntimeException("Invalid email format. Email or username is used.");
+        }
+    }
+
+    public void deleteAdminByUsername(String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+        userRepository.delete(user);
+    }
+}

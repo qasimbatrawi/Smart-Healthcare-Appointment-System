@@ -43,7 +43,7 @@ public class AdminController {
         }
     }
 
-    @PutMapping("/doctor/{username}")
+    @PatchMapping("/doctor/{username}")
     public ResponseEntity<Object> updateDoctorByUsername(@PathVariable String username , @RequestBody DoctorDTO newDoctorDetails){
         try {
             Doctor doctor = adminService.updateDoctorByUsername(username, newDoctorDetails);
