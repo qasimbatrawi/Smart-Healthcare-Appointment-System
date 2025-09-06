@@ -1,6 +1,5 @@
 package com.example.system.document;
 
-import com.example.system.entity.Appointment;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -22,5 +21,5 @@ public class Prescription {
     private int appointmentId ;
 
     @NotNull
-    private String description ;
+    private String notes ;
 }

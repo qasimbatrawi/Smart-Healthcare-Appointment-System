@@ -65,7 +65,7 @@ public class OwnerController {
     }
 
     @DeleteMapping("/admin/{username}")
-    public ResponseEntity<Object> deleteDoctor(@PathVariable String username){
+    public ResponseEntity<Object> deleteAdmin(@PathVariable String username){
         try{
             ownerService.deleteAdminByUsername(username) ;
             return ResponseEntity.noContent().build() ;

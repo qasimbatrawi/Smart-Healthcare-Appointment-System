@@ -1,7 +1,9 @@
 package com.example.system.controller;
 
 import com.example.system.dto.DoctorDTO;
+import com.example.system.dto.UserDTO;
 import com.example.system.entity.Doctor;
+import com.example.system.entity.Patient;
 import com.example.system.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,7 @@ public class AdminController {
         return adminService.getAllDoctors() ;
     }
 
-    @GetMapping("/doctor/username/{username}")
+    @GetMapping("/doctor_username/{username}")
     public ResponseEntity<Object> getDoctorByUsername(@PathVariable String username){
         try {
             Doctor doctor = adminService.getDoctorByUsername(username);
@@ -43,7 +45,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/doctor/specialty/{specialtyName}")
+    @GetMapping("/doctor_specialty/{specialtyName}")
     public ResponseEntity<Object> getDoctorBySpecialty(@PathVariable String specialtyName){
         try {
             List<Doctor> doctors = adminService.getDoctorBySpecialty(specialtyName);
@@ -69,6 +71,16 @@ public class AdminController {
             adminService.deleteDoctorByUsername(username) ;
             return ResponseEntity.noContent().build() ;
         } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
+
+    @PostMapping("/new_patient")
+    public ResponseEntity<Object> addNewPatient(@RequestBody UserDTO patient){
+        try {
+            Patient newPatient = adminService.addNewPatient(patient);
+            return ResponseEntity.ok(newPatient) ;
+        } catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage()) ;
         }
     }
