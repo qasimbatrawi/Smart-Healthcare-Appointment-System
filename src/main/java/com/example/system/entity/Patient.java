@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -19,7 +22,23 @@ public class Patient {
     @JoinColumn(name = "user_id")
     private User patientDetails ;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-    private Set<Appointment> appointments = new HashSet<>();
+    public boolean isAvailable(LocalDateTime from , LocalDateTime to , List<Appointment> appointments){
+
+        if (from.isAfter(to) || from.isEqual(to)) {
+            return false;
+        }
+
+        LocalTime startTime = from.toLocalTime() ;
+        LocalTime endTime = to.toLocalTime() ;
+
+        for(Appointment appointment : appointments){
+
+            if (from.isBefore(appointment.getEndTime()) && to.isAfter(appointment.getStartTime())){
+                return false ;
+            }
+        }
+
+        return true ;
+    }
 
 }

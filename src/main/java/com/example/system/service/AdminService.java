@@ -6,9 +6,7 @@ import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.*;
 import com.example.system.repository.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -62,6 +60,11 @@ public class AdminService {
                 .map(specialty -> specialtyRepository.findBySpecialtyName(specialty)) // map to Specialty object
                 .collect(Collectors.toSet());
 
+        if (doctor.getWorkDayStart().isAfter(doctor.getWorkDayEnd())
+            || doctor.getWorkDayStart().equals(doctor.getWorkDayEnd())){
+            throw new RuntimeException("Invalid work hours.") ;
+        }
+
         Role role = roleRepository.findByRoleName(RoleName.DOCTOR) ;
 
         newUser.setUsername(doctor.getUsername());
@@ -107,6 +110,11 @@ public class AdminService {
         if (newUsername == null || newEmail == null || newName == null
             || newPassword == null || newWorkDayStart == null || newWorkDayEnd == null){
             throw new RuntimeException("Fields must not be empty.") ;
+        }
+
+        if (newWorkDayStart.isAfter(newWorkDayEnd)
+                || newWorkDayStart.equals(newWorkDayEnd)){
+            throw new RuntimeException("Invalid work hours.") ;
         }
 
         // map entered specialties to objects
@@ -178,5 +186,10 @@ public class AdminService {
         } catch (Exception e){
             throw new RuntimeException("Invalid email format. Email or username is used.");
         }
+    }
+
+    public Patient getPatientByUsername(String username){
+        return patientRepository.findByPatientDetails_Username(username)
+                .orElseThrow(() -> new RuntimeException("Patient not found")) ;
     }
 }

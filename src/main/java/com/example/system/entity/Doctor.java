@@ -8,6 +8,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -26,38 +27,33 @@ public class Doctor {
     @NotEmpty(message = "Doctor must have at least one specialty")
     private Set<Specialty> specialty = new HashSet<>();
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
-    private Set<Appointment> appointments = new HashSet<>();
-
     @Column(nullable = false)
     private LocalTime workDayStart ;
 
     @Column(nullable = false)
     private LocalTime workDayEnd ;
 
-    public boolean isAvailable(LocalDateTime from , LocalDateTime to){
+    public boolean isAvailable(LocalDateTime from , LocalDateTime to , List<Appointment> appointments){
+
+        if (from.isAfter(to) || from.isEqual(to)) {
+            return false;
+        }
 
         LocalTime startTime = from.toLocalTime() ;
         LocalTime endTime = to.toLocalTime() ;
 
-        boolean available = true ;
-
-        if (startTime.isBefore(this.getWorkDayStart()) ||
-            startTime.isAfter(this.getWorkDayEnd()) ||
-            endTime.isBefore(this.getWorkDayStart()) ||
-            endTime.isAfter(this.getWorkDayEnd())){
-            available = false ;
+        if (startTime.isBefore(this.workDayStart) || endTime.isAfter(this.workDayEnd)){
+            return false ;
         }
 
-        for(Appointment appointment : this.appointments){
-            if (appointment.getStartTime().isBefore(from)
-                && appointment.getEndTime().isAfter(to)) {
-                available = false;
-                break;
+        for(Appointment appointment : appointments){
+
+            if (from.isBefore(appointment.getEndTime()) && to.isAfter(appointment.getStartTime())){
+                return false ;
             }
         }
 
-        return available ;
+        return true ;
     }
 
 }

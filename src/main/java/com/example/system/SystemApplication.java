@@ -14,6 +14,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @SpringBootApplication
 public class SystemApplication implements CommandLineRunner{
 
@@ -35,26 +37,32 @@ public class SystemApplication implements CommandLineRunner{
 		// add roles to the database
 		for (RoleName roleName : RoleName.values()) {
 			Role role = roleRepository.findByRoleName(roleName);
-			roleRepository.save(role);
+			if (role == null) {
+				role = new Role();
+				role.setRoleName(roleName);
+				roleRepository.save(role);
+			}
 		}
 
 		// add specialties to the database
 		for (SpecialtyName specialtyName : SpecialtyName.values()){
 			Specialty specialty = specialtyRepository.findBySpecialtyName(specialtyName);
-			specialtyRepository.save(specialty);
+			if (specialty == null) {
+				specialty = new Specialty();
+				specialty.setSpecialtyName(specialtyName);
+				specialtyRepository.save(specialty);
+			}
 		}
 
-		try {
-			userRepository.findByRole_RoleName(RoleName.OWNER).getFirst();
-		} catch(Exception e){
-			// add one OWNER to the database
-			User owner = new User() ;
+		List<User> owners = userRepository.findByRole_RoleName(RoleName.OWNER);
+		if (owners.isEmpty()) {
+			User owner = new User();
 			owner.setName("Qasim Batrawi");
 			owner.setEmail("qasim123batrawi@gmail.com");
 			owner.setUsername("qasimbatrawi_04");
 			owner.setPassword("100200300");
 			owner.setRole(roleRepository.findByRoleName(RoleName.OWNER));
-			userRepository.save(owner) ;
+			userRepository.save(owner);
 		}
 	}
 

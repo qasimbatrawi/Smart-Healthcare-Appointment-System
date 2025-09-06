@@ -22,6 +22,16 @@ public class PatientController {
         this.patientService = patientService ;
     }
 
+    @PostMapping("/book_appointment")
+    public ResponseEntity<Object> bookAppointment(@RequestBody AppointmentDTO appointment){
+        try {
+            Appointment apt = patientService.bookAppointment(appointment);
+            return ResponseEntity.ok(apt) ;
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
+
     @GetMapping("/doctor_time/{username}")
     public ResponseEntity<Object> getAvailableTimeForDoctorByUsernameThisWeek(@PathVariable String username){
         try {

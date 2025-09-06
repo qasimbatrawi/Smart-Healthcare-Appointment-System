@@ -84,4 +84,14 @@ public class AdminController {
             return ResponseEntity.badRequest().body(e.getMessage()) ;
         }
     }
+
+    @GetMapping("/patient_username/{username}")
+    public ResponseEntity<Object> getPatientByUsername(@PathVariable String username){
+        try {
+            Patient patient = adminService.getPatientByUsername(username);
+            return ResponseEntity.ok(patient) ;
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
 }

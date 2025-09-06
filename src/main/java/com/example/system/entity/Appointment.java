@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @Entity
@@ -21,10 +20,15 @@ public class Appointment {
     @NotNull
     private LocalDateTime endTime ;
 
+    @NotNull
+    private boolean completed ;
+
     @ManyToOne
+    @JoinColumn(name = "doctor_id")
     private Doctor doctor ;
 
     @ManyToOne
+    @JoinColumn(name = "patient_id")
     private Patient patient ;
 
 }
