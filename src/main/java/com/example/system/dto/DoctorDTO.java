@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,9 +27,9 @@ public class DoctorDTO {
     private Set<SpecialtyDTO> specialty = new HashSet<>();
 
     @NotNull
-    private Integer workDayStart ;
+    private LocalTime workDayStart ;
 
     @NotNull
-    private Integer workDayEnd ;
+    private LocalTime workDayEnd ;
 
 }

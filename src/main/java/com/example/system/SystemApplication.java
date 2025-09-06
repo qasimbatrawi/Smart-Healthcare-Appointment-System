@@ -56,8 +56,6 @@ public class SystemApplication implements CommandLineRunner{
 			owner.setRole(roleRepository.findByRoleName(RoleName.OWNER));
 			userRepository.save(owner) ;
 		}
-
-
 	}
 
 }

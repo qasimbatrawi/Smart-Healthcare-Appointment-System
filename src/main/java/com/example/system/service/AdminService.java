@@ -62,11 +62,6 @@ public class AdminService {
                 .map(specialty -> specialtyRepository.findBySpecialtyName(specialty)) // map to Specialty object
                 .collect(Collectors.toSet());
 
-        if (doctor.getWorkDayStart() < 0 || doctor.getWorkDayEnd() < 0
-            || doctor.getWorkDayStart() >= 24 || doctor.getWorkDayEnd() >= 24){
-            throw new RuntimeException("Invalid Work Hours.") ;
-        }
-
         Role role = roleRepository.findByRoleName(RoleName.DOCTOR) ;
 
         newUser.setUsername(doctor.getUsername());
@@ -77,8 +72,8 @@ public class AdminService {
 
         newDoctor.setSpecialty(specialties);
         newDoctor.setDoctorDetails(newUser);
-        newDoctor.setWorkDayStart(LocalTime.of(doctor.getWorkDayStart() ,0));
-        newDoctor.setWorkDayEnd(LocalTime.of(doctor.getWorkDayEnd() ,0));
+        newDoctor.setWorkDayStart(doctor.getWorkDayStart());
+        newDoctor.setWorkDayEnd(doctor.getWorkDayEnd());
 
         try {
             userRepository.save(newUser) ;
@@ -106,8 +101,8 @@ public class AdminService {
         String newEmail = newDoctorDetails.getEmail() ;
         String newName = newDoctorDetails.getName() ;
         String newPassword = newDoctorDetails.getPassword() ;
-        Integer newWorkDayStart = newDoctorDetails.getWorkDayStart() ;
-        Integer newWorkDayEnd = newDoctorDetails.getWorkDayEnd() ;
+        LocalTime newWorkDayStart = newDoctorDetails.getWorkDayStart() ;
+        LocalTime newWorkDayEnd = newDoctorDetails.getWorkDayEnd() ;
 
         if (newUsername == null || newEmail == null || newName == null
             || newPassword == null || newWorkDayStart == null || newWorkDayEnd == null){
@@ -132,8 +127,8 @@ public class AdminService {
         doctor.getDoctorDetails().setEmail(newEmail) ;
         doctor.getDoctorDetails().setName(newName) ;
         doctor.getDoctorDetails().setPassword(newPassword) ;
-        doctor.setWorkDayStart(LocalTime.of(newWorkDayStart , 0));
-        doctor.setWorkDayEnd(LocalTime.of(newWorkDayEnd , 0));
+        doctor.setWorkDayStart(newWorkDayStart);
+        doctor.setWorkDayEnd(newWorkDayEnd);
 
         try {
             return doctorRepository.save(doctor);
