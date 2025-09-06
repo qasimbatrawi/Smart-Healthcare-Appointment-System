@@ -155,4 +155,32 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
         doctorRepository.delete(doctor);
     }
+
+    public Patient addNewPatient(UserDTO patient){
+
+        if (patient.getName() == null || patient.getPassword() == null
+            || patient.getEmail() == null || patient.getUsername() == null){
+            throw new RuntimeException("Fields must not be empty.") ;
+        }
+
+        Patient newPatient = new Patient() ;
+        User newUser = new User() ;
+
+        Role role = roleRepository.findByRoleName(RoleName.PATIENT) ;
+
+        newUser.setUsername(patient.getUsername());
+        newUser.setName(patient.getName());
+        newUser.setPassword(patient.getPassword());
+        newUser.setEmail(patient.getEmail());
+        newUser.setRole(role);
+
+        newPatient.setPatientDetails(newUser);
+
+        try {
+            userRepository.save(newUser) ;
+            return patientRepository.save(newPatient) ;
+        } catch (Exception e){
+            throw new RuntimeException("Invalid email format. Email or username is used.");
+        }
+    }
 }
