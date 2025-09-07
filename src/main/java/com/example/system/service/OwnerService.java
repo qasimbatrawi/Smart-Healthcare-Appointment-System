@@ -50,20 +50,16 @@ public class OwnerService {
     }
 
     public User getAdminByUsername(String username){
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameAndRole_RoleName(username, RoleName.ADMIN)
                 .orElseThrow(() -> new RuntimeException("Admin not found")) ;
-
-        if (user.getRole().getRoleName() != RoleName.ADMIN){
-            throw new RuntimeException(username + " is not admin") ;
-        }
 
         return user ;
     }
 
     public User updateAdminByUsername(String username , UserDTO newUserDetails){
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
+        User user = userRepository.findByUsernameAndRole_RoleName(username, RoleName.ADMIN)
+                .orElseThrow(() -> new RuntimeException("Admin not found")) ;
 
         String newUsername = newUserDetails.getUsername() ;
         String newEmail = newUserDetails.getEmail() ;
