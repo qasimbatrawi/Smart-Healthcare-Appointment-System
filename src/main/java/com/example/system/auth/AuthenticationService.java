@@ -93,8 +93,8 @@ public class AuthenticationService {
             throw new RuntimeException("Fields must not be empty") ;
         }
 
-        if (doctor.getWorkDayStart().isAfter(doctor.getWorkDayEnd())
-                || doctor.getWorkDayStart().equals(doctor.getWorkDayEnd())){
+        if (workStart.isAfter(workEnd)
+                || workStart.equals(workEnd)){
             throw new RuntimeException("Invalid work hours.") ;
         }
 
@@ -164,10 +164,14 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
-                request.getPassword()
-        )) ;
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    request.getUsername(),
+                    request.getPassword()
+            ));
+        } catch(Exception e){
+            throw new RuntimeException("Incorrect Password.") ;
+        }
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found.")) ;
 

@@ -21,20 +21,18 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PatientService {
 
-    private DoctorRepository doctorRepository ;
-    private AppointmentRepository appointmentRepository ;
-    private PatientRepository patientRepository ;
+    private final DoctorRepository doctorRepository ;
+    private final AppointmentRepository appointmentRepository ;
+    private final PatientRepository patientRepository ;
 
-    public Appointment bookAppointment(AppointmentDTO appointment){
+    public Appointment bookAppointment(String patientUsername , AppointmentDTO appointment){
 
         String doctorUsername = appointment.getDoctorUsername() ;
-        String patientUsername = appointment.getPatientUsername() ; // ***************** SHOULD GET THE USERNAME AUTOMATICALLY
         LocalDate date = appointment.getDate() ;
         LocalTime start = appointment.getStartTime() ;
         LocalTime end = appointment.getEndTime() ;
 
-        if (doctorUsername == null || patientUsername == null || date == null
-            || start == null || end == null){
+        if (doctorUsername == null || date == null || start == null || end == null){
             throw new RuntimeException("Fields must not be empty.") ;
         }
 
@@ -107,7 +105,7 @@ public class PatientService {
                     }
                     available.get(today).add(interval) ;
                 }
-                start = to.toLocalTime();
+                start = to.toLocalTime().isAfter(start) ? to.toLocalTime() : start.plusMinutes(5);
             }
 
             today = today.plusDays(1);
@@ -125,7 +123,7 @@ public class PatientService {
         }
     }
 
-    public Patient updatePatientByUsername(String username , UserDTO newPatientDetails){
+    public Patient updatePatient(String username , UserDTO newPatientDetails){
 
         Patient patient = patientRepository.findByPatientDetails_Username(username)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));

@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OwnerController {
 
-    private OwnerService ownerService ;
+    private final OwnerService ownerService ;
 
     @GetMapping
     public User getOwner(){

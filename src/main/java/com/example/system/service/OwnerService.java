@@ -13,8 +13,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OwnerService {
 
-    private RoleRepository roleRepository ;
-    private UserRepository userRepository ;
+    private final RoleRepository roleRepository ;
+    private final UserRepository userRepository ;
 
     public User getOwner(){
         return userRepository.findByRole_RoleName(RoleName.OWNER).getFirst() ;

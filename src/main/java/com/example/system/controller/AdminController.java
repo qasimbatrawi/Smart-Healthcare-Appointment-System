@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private AdminService adminService ;
+    private final AdminService adminService ;
 
     @GetMapping("/all_doctors")
     public List<Doctor> getAllDoctors(){

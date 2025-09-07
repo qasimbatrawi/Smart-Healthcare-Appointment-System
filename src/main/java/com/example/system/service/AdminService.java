@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminService {
 
-    private DoctorRepository doctorRepository ;
-    private PatientRepository patientRepository ;
-    private SpecialtyRepository specialtyRepository ;
+    private final DoctorRepository doctorRepository ;
+    private final PatientRepository patientRepository ;
+    private final SpecialtyRepository specialtyRepository ;
 
     public List<Doctor> getAllDoctors(){
         return doctorRepository.findAll() ;

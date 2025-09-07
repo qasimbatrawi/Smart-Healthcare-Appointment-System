@@ -8,6 +8,7 @@ import com.example.system.entity.Patient;
 import com.example.system.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,12 +21,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PatientController {
 
-    private PatientService patientService ;
+    private final PatientService patientService ;
 
     @PostMapping("/book_appointment")
     public ResponseEntity<Object> bookAppointment(@RequestBody AppointmentDTO appointment){
         try {
-            Appointment apt = patientService.bookAppointment(appointment);
+            String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
+            Appointment apt = patientService.bookAppointment(username, appointment);
             return ResponseEntity.ok(apt) ;
         } catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage()) ;
@@ -52,10 +54,11 @@ public class PatientController {
         }
     }
 
-    @PatchMapping("/{username}")
-    public ResponseEntity<Object> updatePatientByUsername(@PathVariable String username , @RequestBody UserDTO newPatientDetails){
+    @PatchMapping
+    public ResponseEntity<Object> updatePatient(@RequestBody UserDTO newPatientDetails){
         try {
-            Patient patient = patientService.updatePatientByUsername(username, newPatientDetails);
+            String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
+            Patient patient = patientService.updatePatient(username, newPatientDetails);
             return ResponseEntity.ok(patient) ;
         } catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage()) ;

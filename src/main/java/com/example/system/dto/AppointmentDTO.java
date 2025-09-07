@@ -19,8 +19,5 @@ public class AppointmentDTO {
     private LocalTime endTime ;
 
     @NotNull
-    private String patientUsername ;
-
-    @NotNull
     private String doctorUsername ;
 }

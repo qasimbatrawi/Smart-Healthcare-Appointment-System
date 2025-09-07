@@ -44,7 +44,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> register(@RequestBody AuthenticationRequest request){
+    public ResponseEntity<Object> authenticate(@RequestBody AuthenticationRequest request){
         try {
             return ResponseEntity.ok(authenticationService.authenticate(request));
         } catch (RuntimeException e){

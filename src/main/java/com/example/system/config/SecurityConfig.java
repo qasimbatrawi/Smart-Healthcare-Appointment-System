@@ -21,16 +21,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Disable CSRF
                 .csrf(csrf -> csrf.disable())
 
-                // Configure authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/system/auth/**").permitAll()
-                        .requestMatchers("/owner/**").hasRole("OWNER")
-                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "OWNER")
-                        .requestMatchers("/doctor/**").hasAnyRole("DOCTOR", "ADMIN", "OWNER")
-                        .requestMatchers("/patient/**").hasAnyRole("PATIENT", "ADMIN", "OWNER")
+                        .requestMatchers("/system/auth/login").permitAll()
+                        .requestMatchers("/system/auth/**").hasAnyAuthority("ADMIN", "OWNER")
+                        .requestMatchers("/owner/**").hasAuthority("OWNER")
+                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "OWNER")
+                        .requestMatchers("/doctor/**").hasAnyAuthority("DOCTOR", "ADMIN", "OWNER")
+                        .requestMatchers("/patient/**").hasAnyAuthority("PATIENT", "ADMIN", "OWNER")
                         .anyRequest().authenticated()
                 )
 
