@@ -1,10 +1,10 @@
 package com.example.system.controller;
 
 import com.example.system.dto.DoctorDTO;
-import com.example.system.dto.UserDTO;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.service.AdminService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,23 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
     private AdminService adminService ;
-
-    public AdminController (AdminService adminService){
-        this.adminService = adminService ;
-    }
-
-    @PostMapping("/new_doctor")
-    public ResponseEntity<Object> addNewDoctor(@RequestBody DoctorDTO doctor){
-        try {
-            Doctor newDoctor = adminService.addNewDoctor(doctor);
-            return ResponseEntity.ok(newDoctor) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
-    }
 
     @GetMapping("/all_doctors")
     public List<Doctor> getAllDoctors(){
@@ -71,16 +58,6 @@ public class AdminController {
             adminService.deleteDoctorByUsername(username) ;
             return ResponseEntity.noContent().build() ;
         } catch(RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
-    }
-
-    @PostMapping("/new_patient")
-    public ResponseEntity<Object> addNewPatient(@RequestBody UserDTO patient){
-        try {
-            Patient newPatient = adminService.addNewPatient(patient);
-            return ResponseEntity.ok(newPatient) ;
-        } catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage()) ;
         }
     }

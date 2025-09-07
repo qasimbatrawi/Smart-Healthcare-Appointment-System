@@ -2,39 +2,28 @@ package com.example.system.service;
 
 import com.example.system.Enum.SpecialtyName;
 import com.example.system.dto.AppointmentDTO;
-import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
-import com.example.system.entity.Specialty;
 import com.example.system.repository.AppointmentRepository;
 import com.example.system.repository.DoctorRepository;
 import com.example.system.repository.PatientRepository;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PatientService {
 
     private DoctorRepository doctorRepository ;
     private AppointmentRepository appointmentRepository ;
     private PatientRepository patientRepository ;
-
-    public PatientService (DoctorRepository doctorRepository,
-                           AppointmentRepository appointmentRepository,
-                           PatientRepository patientRepository){
-        this.doctorRepository = doctorRepository ;
-        this.appointmentRepository = appointmentRepository ;
-        this.patientRepository = patientRepository ;
-    }
 
     public Appointment bookAppointment(AppointmentDTO appointment){
 

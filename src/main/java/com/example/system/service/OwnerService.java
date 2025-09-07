@@ -2,27 +2,19 @@ package com.example.system.service;
 
 import com.example.system.Enum.RoleName;
 import com.example.system.dto.UserDTO;
-import com.example.system.entity.Role;
 import com.example.system.entity.User;
 import com.example.system.repository.*;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OwnerService {
 
     private RoleRepository roleRepository ;
     private UserRepository userRepository ;
-
-    public OwnerService (RoleRepository roleRepository,
-                         UserRepository userRepository){
-        this.roleRepository = roleRepository ;
-        this.userRepository = userRepository ;
-    }
 
     public User getOwner(){
         return userRepository.findByRole_RoleName(RoleName.OWNER).getFirst() ;
@@ -48,30 +40,6 @@ public class OwnerService {
 
         try {
             return userRepository.save(owner);
-        } catch (Exception e){
-            throw new RuntimeException("Invalid email format. Email or username is used.");
-        }
-    }
-
-    public User addNewAdmin(UserDTO user){
-
-        User newUser = new User() ;
-
-        if (user.getName() == null || user.getPassword() == null
-                || user.getEmail() == null || user.getUsername() == null){
-            throw new RuntimeException("Fields must not be empty.") ;
-        }
-
-        Role role = roleRepository.findByRoleName(RoleName.ADMIN) ;
-
-        newUser.setUsername(user.getUsername());
-        newUser.setName(user.getName());
-        newUser.setPassword(user.getPassword());
-        newUser.setEmail(user.getEmail());
-        newUser.setRole(role);
-
-        try {
-            return userRepository.save(newUser) ;
         } catch (Exception e){
             throw new RuntimeException("Invalid email format. Email or username is used.");
         }

@@ -1,12 +1,12 @@
 package com.example.system.controller;
 
 import com.example.system.dto.AppointmentDTO;
-import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.service.PatientService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,13 +17,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/patient")
+@RequiredArgsConstructor
 public class PatientController {
 
     private PatientService patientService ;
-
-    public PatientController (PatientService patientService){
-        this.patientService = patientService ;
-    }
 
     @PostMapping("/book_appointment")
     public ResponseEntity<Object> bookAppointment(@RequestBody AppointmentDTO appointment){

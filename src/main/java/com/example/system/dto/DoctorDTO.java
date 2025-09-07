@@ -24,7 +24,7 @@ public class DoctorDTO {
     private String name ;
 
     @NotEmpty
-    private Set<SpecialtyDTO> specialty = new HashSet<>();
+    private Set<SpecialtyDTO> specialties = new HashSet<>();
 
     @NotNull
     private LocalTime workDayStart ;

@@ -3,6 +3,7 @@ package com.example.system.controller;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.User;
 import com.example.system.service.OwnerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +11,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/owner")
+@RequiredArgsConstructor
 public class OwnerController {
 
     private OwnerService ownerService ;
-
-    public OwnerController (OwnerService ownerService){
-        this.ownerService = ownerService ;
-    }
 
     @GetMapping
     public User getOwner(){
@@ -27,16 +25,6 @@ public class OwnerController {
     public ResponseEntity<User> updateOwner(@RequestBody UserDTO newOwnerDetails){
         User user = ownerService.updateOwner(newOwnerDetails);
         return ResponseEntity.ok(user) ;
-    }
-
-    @PostMapping("/new_admin")
-    public ResponseEntity<Object> addNewAdmin(@RequestBody UserDTO user){
-        try {
-            User newAdmin = ownerService.addNewAdmin(user);
-            return ResponseEntity.ok(newAdmin) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
     }
 
     @GetMapping("/all_admins")

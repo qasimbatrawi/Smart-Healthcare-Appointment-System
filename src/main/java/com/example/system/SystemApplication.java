@@ -13,6 +13,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class SystemApplication implements CommandLineRunner{
 
 	@Autowired
 	private UserRepository userRepository ;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder ;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SystemApplication.class, args);
@@ -60,7 +64,7 @@ public class SystemApplication implements CommandLineRunner{
 			owner.setName("Qasim Batrawi");
 			owner.setEmail("qasim123batrawi@gmail.com");
 			owner.setUsername("qasimbatrawi_04");
-			owner.setPassword("100200300");
+			owner.setPassword(passwordEncoder.encode("100200300"));
 			owner.setRole(roleRepository.findByRoleName(RoleName.OWNER));
 			userRepository.save(owner);
 		}
