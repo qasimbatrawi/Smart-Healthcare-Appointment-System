@@ -2,9 +2,12 @@ package com.example.system.service;
 
 import com.example.system.Enum.SpecialtyName;
 import com.example.system.dto.AppointmentDTO;
+import com.example.system.dto.DoctorDTO;
+import com.example.system.dto.UserDTO;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
+import com.example.system.entity.Specialty;
 import com.example.system.repository.AppointmentRepository;
 import com.example.system.repository.DoctorRepository;
 import com.example.system.repository.PatientRepository;
@@ -16,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PatientService {
@@ -129,6 +133,33 @@ public class PatientService {
             return doctorRepository.findBySpecialty_SpecialtyName(specialtyEnum) ;
         } catch (Exception e){
             throw new RuntimeException("Invalid Specialty.") ;
+        }
+    }
+
+    public Patient updatePatientByUsername(String username , UserDTO newPatientDetails){
+
+        Patient patient = patientRepository.findByPatientDetails_Username(username)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        String newUsername = newPatientDetails.getUsername() ;
+        String newEmail = newPatientDetails.getEmail() ;
+        String newName = newPatientDetails.getName() ;
+        String newPassword = newPatientDetails.getPassword() ;
+
+        if (newUsername == null || newEmail == null || newName == null
+                || newPassword == null){
+            throw new RuntimeException("Fields must not be empty.") ;
+        }
+
+        patient.getPatientDetails().setUsername(newUsername) ;
+        patient.getPatientDetails().setEmail(newEmail) ;
+        patient.getPatientDetails().setName(newName) ;
+        patient.getPatientDetails().setPassword(newPassword) ;
+
+        try {
+            return patientRepository.save(patient);
+        } catch (Exception e){
+            throw new RuntimeException("Invalid email format. Email or username is used.");
         }
     }
 }

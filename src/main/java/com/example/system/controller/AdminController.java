@@ -85,6 +85,16 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/all_patients")
+    public ResponseEntity<Object> getAllPatients(){
+        try {
+            List<Patient> patients = adminService.getAllPatients();
+            return ResponseEntity.ok(patients) ;
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
+
     @GetMapping("/patient_username/{username}")
     public ResponseEntity<Object> getPatientByUsername(@PathVariable String username){
         try {

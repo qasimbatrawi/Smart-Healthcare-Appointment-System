@@ -188,6 +188,10 @@ public class AdminService {
         }
     }
 
+    public List<Patient> getAllPatients(){
+        return patientRepository.findAll() ;
+    }
+
     public Patient getPatientByUsername(String username){
         return patientRepository.findByPatientDetails_Username(username)
                 .orElseThrow(() -> new RuntimeException("Patient not found")) ;

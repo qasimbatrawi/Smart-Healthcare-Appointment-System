@@ -1,8 +1,11 @@
 package com.example.system.controller;
 
 import com.example.system.dto.AppointmentDTO;
+import com.example.system.dto.DoctorDTO;
+import com.example.system.dto.UserDTO;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
+import com.example.system.entity.Patient;
 import com.example.system.service.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +50,16 @@ public class PatientController {
         try {
             List<Doctor> doctors = patientService.getDoctorBySpecialty(specialtyName);
             return ResponseEntity.ok(doctors) ;
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
+
+    @PatchMapping("/{username}")
+    public ResponseEntity<Object> updatePatientByUsername(@PathVariable String username , @RequestBody UserDTO newPatientDetails){
+        try {
+            Patient patient = patientService.updatePatientByUsername(username, newPatientDetails);
+            return ResponseEntity.ok(patient) ;
         } catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage()) ;
         }
