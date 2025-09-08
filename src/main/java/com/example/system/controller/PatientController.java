@@ -1,5 +1,7 @@
 package com.example.system.controller;
 
+import com.example.system.document.LabResult;
+import com.example.system.document.Prescription;
 import com.example.system.dto.AppointmentDTO;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.Appointment;
@@ -54,12 +56,45 @@ public class PatientController {
         }
     }
 
+    @GetMapping("/prescription/{appointmentId}")
+    public ResponseEntity<Object> getPrescription(@PathVariable Long appointmentId){
+        try {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
+            Prescription prescription = patientService.getPrescription(username, appointmentId);
+            return ResponseEntity.ok(prescription) ;
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
+
+    @GetMapping("/lab_results/{appointmentId}")
+    public ResponseEntity<Object> getLabResults(@PathVariable Long appointmentId){
+        try {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
+            List<LabResult> labResults = patientService.getLabResults(username, appointmentId);
+            return ResponseEntity.ok(labResults) ;
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
+
     @PatchMapping
     public ResponseEntity<Object> updatePatient(@RequestBody UserDTO newPatientDetails){
         try {
             String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
             Patient patient = patientService.updatePatient(username, newPatientDetails);
             return ResponseEntity.ok(patient) ;
+        } catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage()) ;
+        }
+    }
+
+    @DeleteMapping("/appointment/{appointmentId}")
+    public ResponseEntity<Object> cancelAppointment(@PathVariable Long appointmentId){
+        try {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
+            patientService.cancelAppointment(username, appointmentId);
+            return ResponseEntity.noContent().build() ;
         } catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage()) ;
         }

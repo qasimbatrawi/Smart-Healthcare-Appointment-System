@@ -1,6 +1,7 @@
 package com.example.system.service;
 
 import com.example.system.Enum.SpecialtyName;
+import com.example.system.document.MedicalReport;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.*;
 import com.example.system.repository.*;
@@ -22,6 +23,7 @@ public class AdminService {
     private final SpecialtyRepository specialtyRepository ;
     private final PasswordEncoder passwordEncoder ;
     private final AppointmentRepository appointmentRepository ;
+    private final MedicalReportRepository medicalReportRepository ;
 
     public List<Doctor> getAllDoctors(){
         return doctorRepository.findAll() ;
@@ -96,6 +98,12 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
         List<Appointment> appointments = appointmentRepository.findByDoctor_DoctorDetails_Username(username) ;
+
+        appointments.forEach(appointment -> {
+            MedicalReport md = medicalReportRepository.findByAppointmentId(appointment.getId()) ;
+            medicalReportRepository.delete(md);
+        });
+
         appointments.forEach(appointmentRepository::delete);
 
         doctorRepository.delete(doctor);

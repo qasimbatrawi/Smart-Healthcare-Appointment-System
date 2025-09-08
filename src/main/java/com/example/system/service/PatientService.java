@@ -1,6 +1,9 @@
 package com.example.system.service;
 
 import com.example.system.Enum.SpecialtyName;
+import com.example.system.document.LabResult;
+import com.example.system.document.MedicalReport;
+import com.example.system.document.Prescription;
 import com.example.system.dto.AppointmentDTO;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.Appointment;
@@ -8,6 +11,7 @@ import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
 import com.example.system.repository.AppointmentRepository;
 import com.example.system.repository.DoctorRepository;
+import com.example.system.repository.MedicalReportRepository;
 import com.example.system.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +30,7 @@ public class PatientService {
     private final AppointmentRepository appointmentRepository ;
     private final PatientRepository patientRepository ;
     private final PasswordEncoder passwordEncoder ;
+    private final MedicalReportRepository medicalReportRepository ;
 
     public Appointment bookAppointment(String patientUsername , AppointmentDTO appointment){
 
@@ -59,7 +64,7 @@ public class PatientService {
 
         List<Appointment> patientAppointments = appointmentRepository
                 .findByPatient_PatientDetails_Username(patientUsername) ;
-        if (!doctor.isAvailable(startTime, endTime, patientAppointments)) {
+        if (!patient.isAvailable(startTime, endTime, patientAppointments)) {
             throw new RuntimeException("You have another book at this time.");
         }
 
@@ -150,5 +155,55 @@ public class PatientService {
         } catch (Exception e){
             throw new RuntimeException("Invalid email format. Email or username is used.");
         }
+    }
+
+    public void cancelAppointment(String username, Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found.")) ;
+
+        if (!appointment.getPatient().getPatientDetails().getUsername().equals(username)){
+            throw new RuntimeException("Cannot delete appointment for other patients.") ;
+        }
+
+        MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
+        medicalReportRepository.delete(medicalReport);
+
+        appointmentRepository.delete(appointment);
+    }
+
+    public Prescription getPrescription(String username, Long appointmentId) {
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found.")) ;
+
+        if (appointment.getPatient().getPatientDetails().getName().equals(username)){
+            throw new RuntimeException("You cannot view other patients appointments.") ;
+        }
+
+        MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
+
+        if (medicalReport.getPrescription() == null){
+            throw new RuntimeException("Prescription is not ready.") ;
+        }
+
+        return medicalReport.getPrescription() ;
+    }
+
+    public List<LabResult> getLabResults(String username, Long appointmentId) {
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RuntimeException("Appointment not found.")) ;
+
+        if (appointment.getPatient().getPatientDetails().getName().equals(username)){
+            throw new RuntimeException("You cannot view other patients appointments.") ;
+        }
+
+        MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
+
+        if (medicalReport.getLabResults() == null){
+            throw new RuntimeException("Lab results are not ready.") ;
+        }
+
+        return medicalReport.getLabResults() ;
     }
 }
