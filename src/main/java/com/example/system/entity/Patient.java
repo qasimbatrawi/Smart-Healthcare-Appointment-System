@@ -6,9 +6,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Entity
@@ -27,9 +25,6 @@ public class Patient {
         if (from.isAfter(to) || from.isEqual(to)) {
             return false;
         }
-
-        LocalTime startTime = from.toLocalTime() ;
-        LocalTime endTime = to.toLocalTime() ;
 
         for(Appointment appointment : appointments){
 

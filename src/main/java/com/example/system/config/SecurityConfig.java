@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/owner/**").hasAuthority("OWNER")
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN", "OWNER")
                         .requestMatchers("/doctor/**").hasAnyAuthority("DOCTOR", "ADMIN", "OWNER")
-                        .requestMatchers("/patient/**").hasAnyAuthority("PATIENT", "ADMIN", "OWNER")
+                        .requestMatchers("/patient/**").hasAuthority("PATIENT")
                         .anyRequest().authenticated()
                 )
 

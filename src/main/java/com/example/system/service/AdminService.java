@@ -5,6 +5,7 @@ import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.*;
 import com.example.system.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -19,6 +20,8 @@ public class AdminService {
     private final DoctorRepository doctorRepository ;
     private final PatientRepository patientRepository ;
     private final SpecialtyRepository specialtyRepository ;
+    private final PasswordEncoder passwordEncoder ;
+    private final AppointmentRepository appointmentRepository ;
 
     public List<Doctor> getAllDoctors(){
         return doctorRepository.findAll() ;
@@ -37,7 +40,7 @@ public class AdminService {
         String newUsername = newDoctorDetails.getUsername() ;
         String newEmail = newDoctorDetails.getEmail() ;
         String newName = newDoctorDetails.getName() ;
-        String newPassword = newDoctorDetails.getPassword() ;
+        String newPassword = passwordEncoder.encode(newDoctorDetails.getPassword()) ;
         LocalTime newWorkDayStart = newDoctorDetails.getWorkDayStart() ;
         LocalTime newWorkDayEnd = newDoctorDetails.getWorkDayEnd() ;
 
@@ -91,6 +94,10 @@ public class AdminService {
     public void deleteDoctorByUsername(String username){
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        List<Appointment> appointments = appointmentRepository.findByDoctor_DoctorDetails_Username(username) ;
+        appointments.forEach(appointmentRepository::delete);
+
         doctorRepository.delete(doctor);
     }
 

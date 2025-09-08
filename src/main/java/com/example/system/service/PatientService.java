@@ -10,6 +10,7 @@ import com.example.system.repository.AppointmentRepository;
 import com.example.system.repository.DoctorRepository;
 import com.example.system.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class PatientService {
     private final DoctorRepository doctorRepository ;
     private final AppointmentRepository appointmentRepository ;
     private final PatientRepository patientRepository ;
+    private final PasswordEncoder passwordEncoder ;
 
     public Appointment bookAppointment(String patientUsername , AppointmentDTO appointment){
 
@@ -131,7 +133,7 @@ public class PatientService {
         String newUsername = newPatientDetails.getUsername() ;
         String newEmail = newPatientDetails.getEmail() ;
         String newName = newPatientDetails.getName() ;
-        String newPassword = newPatientDetails.getPassword() ;
+        String newPassword = passwordEncoder.encode(newPatientDetails.getPassword()) ;
 
         if (newUsername == null || newEmail == null || newName == null
                 || newPassword == null){
