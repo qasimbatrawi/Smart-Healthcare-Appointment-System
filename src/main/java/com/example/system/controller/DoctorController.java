@@ -31,7 +31,7 @@ public class DoctorController {
     }
 
     @PatchMapping("/completed_appointment/{appointmentId}")
-    public ResponseEntity<Object> markAppointmentCompletedAndAddPrescription(@PathVariable Long appointmentId){
+    public ResponseEntity<Object> markAppointmentCompleted(@PathVariable Long appointmentId){
         try {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             Appointment appointment = doctorService.markAppointmentCompleted(username, appointmentId);

@@ -1,7 +1,5 @@
 package com.example.system.aop;
 
-import java.util.Arrays;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,34 +9,51 @@ import org.springframework.stereotype.Component;
 @Component
 public class logging {
 
-    @Pointcut("within(com.example.system.service..*) || within(com.example.system.controller..*)")
-    public void applicationPackagePointcut() {
-    }
-
-    @Pointcut("within(com.example.system.service..*)")
+    @Pointcut("within(com.example.system.controller..*)")
     public void appointment() {
     }
 
-    @AfterThrowing(pointcut = "springBeanPointcut()", throwing = "e")
-    public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        System.out.println("Exception in " +
-                joinPoint.getSignature().getDeclaringTypeName() + "." +
-                joinPoint.getSignature().getName() +
-                " with cause = " + (e.getCause() != null ? e.getCause() : "NULL"));
-    }
-
-    @Around("applicationPackagePointcut()")
-    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("Enter: " + joinPoint.getSignature().getDeclaringTypeName() + "." +
-                joinPoint.getSignature().getName() + " with argument[s] = " +
-                Arrays.toString(joinPoint.getArgs()));
+    @Around("appointment()")
+    public Object loggingResults(ProceedingJoinPoint joinPoint) throws Throwable {
 
         Object result = joinPoint.proceed();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
 
-        System.out.println("Exit: " + joinPoint.getSignature().getDeclaringTypeName() + "." +
-                joinPoint.getSignature().getName() + " with result = " + result);
+        if (joinPoint.getSignature().getName().equals("bookAppointment")){
+            if (result.toString().matches(".*200 OK.*")){
+                String doctorUsername = result.toString().split("username=")[1].split(",")[0] ;
+                String time = result.toString().split("startTime=")[1].split(",")[0] ;
+                System.out.println("\n" + username + " has booked appointment at " + time + " with Dr. " + doctorUsername + "\n") ;
+            }
+            else{
+                System.out.println("\n" + username + " failed to book appointment. " + result.toString().split(",")[1] + "\n") ;
+            }
+        }
+        else if (joinPoint.getSignature().getName().equals("cancelAppointment")){
+            if (result == null){
+                System.out.println("\n" + username + " has canceled appointment.\n") ;
+            }
+            else{
+                System.out.println("\n" + username + " failed to cancel appointment. " + result.toString().split(",")[1] + "\n") ;
+            }
+        }
+        else if (joinPoint.getSignature().getName().equals("addLabResult")){
+            if (result.toString().matches(".*200 OK.*")){
+                System.out.println("\n" + username + " added new lab result.\n") ;
+            }
+            else{
+                System.out.println("\n" + username + " failed to add lab result. " + result.toString().split(",")[1] + "\n") ;
+            }        }
+        else if (joinPoint.getSignature().getName().equals("newPrescription")){
+            if (result.toString().matches(".*200 OK.*")){
+                System.out.println("\n" + username + " added new prescription.\n") ;
+            }
+            else{
+                System.out.println("\n" + username + " failed to add prescription. " + result.toString().split(",")[1] + "\n") ;
+            }
+        }
 
-        return result;
+        return result ;
     }
 }
 

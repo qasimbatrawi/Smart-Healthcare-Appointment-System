@@ -4,7 +4,6 @@ import com.example.system.document.LabResult;
 import com.example.system.document.MedicalReport;
 import com.example.system.document.Prescription;
 import com.example.system.entity.Appointment;
-import com.example.system.entity.Doctor;
 import com.example.system.repository.AppointmentRepository;
 import com.example.system.repository.MedicalReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,9 +45,12 @@ public class DoctorService {
             throw new RuntimeException("Cannot view appointments for other doctors.") ;
         }
 
-        if (labResult.getResult() == null || labResult.getDate() == null || labResult.getTestName() == null){
+        if (labResult == null || labResult.getResult() == null || labResult.getTestName() == null){
             throw new RuntimeException("Field must not be empty.") ;
         }
+
+        labResult.setDate(LocalDate.now());
+        labResult.setTime(LocalTime.now());
 
         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
 
@@ -55,6 +58,7 @@ public class DoctorService {
             medicalReport = new MedicalReport() ;
             medicalReport.setAppointmentId(appointmentId);
             medicalReport.setLabResults(new ArrayList<>());
+            medicalReport.setDate(LocalDateTime.now());
         }
 
         if (medicalReport.getLabResults() == null){
@@ -74,7 +78,7 @@ public class DoctorService {
             throw new RuntimeException("Cannot view appointments for other doctors.") ;
         }
 
-        if (prescription.getNotes() == null){
+        if (prescription == null || prescription.getNotes() == null){
             throw new RuntimeException("Prescription must have notes.") ;
         }
 
@@ -83,6 +87,7 @@ public class DoctorService {
         if (medicalReport == null){
             medicalReport = new MedicalReport() ;
             medicalReport.setAppointmentId(appointmentId);
+            medicalReport.setDate(LocalDateTime.now());
         }
 
         // each appointment must have exactly one medical report

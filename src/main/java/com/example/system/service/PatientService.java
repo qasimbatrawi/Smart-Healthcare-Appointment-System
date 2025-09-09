@@ -43,13 +43,15 @@ public class PatientService {
             throw new RuntimeException("Fields must not be empty.") ;
         }
 
+        LocalDateTime dateTimeStart = LocalDateTime.of(date , start) ;
+
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(doctorUsername)
                 .orElseThrow(() -> new RuntimeException("Doctor not found.")) ;
 
         Patient patient = patientRepository.findByPatientDetails_Username(patientUsername)
                 .orElseThrow(() -> new RuntimeException("Patient not found.")) ;
 
-        if (date.isBefore(LocalDate.now().plusDays(1))){
+        if (dateTimeStart.isBefore(LocalDateTime.now())){
             throw new RuntimeException("Invalid date.") ;
         }
 
@@ -166,7 +168,10 @@ public class PatientService {
         }
 
         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
-        medicalReportRepository.delete(medicalReport);
+
+        if (medicalReport != null){
+            medicalReportRepository.delete(medicalReport);
+        }
 
         appointmentRepository.delete(appointment);
     }
@@ -182,7 +187,7 @@ public class PatientService {
 
         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
 
-        if (medicalReport.getPrescription() == null){
+        if (medicalReport == null || medicalReport.getPrescription() == null){
             throw new RuntimeException("Prescription is not ready.") ;
         }
 
@@ -200,7 +205,7 @@ public class PatientService {
 
         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
 
-        if (medicalReport.getLabResults() == null){
+        if (medicalReport == null || medicalReport.getLabResults() == null){
             throw new RuntimeException("Lab results are not ready.") ;
         }
 
