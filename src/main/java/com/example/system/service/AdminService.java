@@ -78,7 +78,26 @@ public class AdminService {
         doctor.setWorkDayEnd(newWorkDayEnd);
 
         try {
-            return doctorRepository.save(doctor);
+            Doctor newDoctor = doctorRepository.save(doctor);
+
+            List<Appointment> appointments = appointmentRepository
+                    .findByDoctor_DoctorDetails_Username(newDoctor.getDoctorDetails().getUsername());
+
+            appointments.stream()
+                    .filter(appointment ->
+                            appointment.getStartTime().toLocalTime().isBefore(newDoctor.getWorkDayStart()) ||
+                                    appointment.getEndTime().toLocalTime().isAfter(newDoctor.getWorkDayEnd())
+                    )
+                    .forEach(appointment -> {
+                        MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointment.getId());
+                        if (medicalReport != null) {
+                            medicalReportRepository.delete(medicalReport);
+                        }
+                        appointmentRepository.delete(appointment);
+                    });
+
+            return newDoctor;
+
         } catch (Exception e){
             throw new RuntimeException("Invalid email format. Email or username is used.");
         }
