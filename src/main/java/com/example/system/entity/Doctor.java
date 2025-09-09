@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -13,6 +15,8 @@ import java.util.Set;
 
 @Data
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Doctor {
 
     @Id
@@ -21,10 +25,12 @@ public class Doctor {
 
     @OneToOne(cascade = CascadeType.ALL) // update other classes when modifying Doctor
     @JoinColumn(name = "user_id")
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private User doctorDetails;
 
     @ManyToMany
     @NotEmpty(message = "Doctor must have at least one specialty")
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<Specialty> specialty = new HashSet<>();
 
     @Column(nullable = false)
