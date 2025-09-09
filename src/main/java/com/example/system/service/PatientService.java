@@ -9,6 +9,10 @@ import com.example.system.dto.UserDTO;
 import com.example.system.entity.Appointment;
 import com.example.system.entity.Doctor;
 import com.example.system.entity.Patient;
+import com.example.system.exception.AccessDeniedException;
+import com.example.system.exception.BadRequestException;
+import com.example.system.exception.BookingConflictException;
+import com.example.system.exception.ResourceNotFoundException;
 import com.example.system.repository.AppointmentRepository;
 import com.example.system.repository.DoctorRepository;
 import com.example.system.repository.MedicalReportRepository;
@@ -40,19 +44,19 @@ public class PatientService {
         LocalTime end = appointment.getEndTime() ;
 
         if (doctorUsername == null || date == null || start == null || end == null){
-            throw new RuntimeException("Fields must not be empty.") ;
+            throw new BadRequestException("Fields must not be empty.") ;
         }
 
         LocalDateTime dateTimeStart = LocalDateTime.of(date , start) ;
 
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(doctorUsername)
-                .orElseThrow(() -> new RuntimeException("Doctor not found.")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found.")) ;
 
         Patient patient = patientRepository.findByPatientDetails_Username(patientUsername)
-                .orElseThrow(() -> new RuntimeException("Patient not found.")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found.")) ;
 
         if (dateTimeStart.isBefore(LocalDateTime.now())){
-            throw new RuntimeException("Invalid date.") ;
+            throw new BadRequestException("Invalid date.") ;
         }
 
         LocalDateTime startTime = LocalDateTime.of(date , start) ;
@@ -61,13 +65,13 @@ public class PatientService {
         List<Appointment> doctorAppointments = appointmentRepository
                 .findByDoctor_DoctorDetails_Username(doctorUsername) ;
         if (!doctor.isAvailable(startTime, endTime, doctorAppointments)) {
-            throw new RuntimeException("Doctor is not available at this time.");
+            throw new BookingConflictException("Doctor is not available at this time.");
         }
 
         List<Appointment> patientAppointments = appointmentRepository
                 .findByPatient_PatientDetails_Username(patientUsername) ;
         if (!patient.isAvailable(startTime, endTime, patientAppointments)) {
-            throw new RuntimeException("You have another book at this time.");
+            throw new BookingConflictException("You have another book at this time.");
         }
 
         Appointment newAppointment = new Appointment() ;
@@ -83,7 +87,7 @@ public class PatientService {
 
     public Map<LocalDate, List<Map<LocalTime, LocalTime>>> getAvailableTimeForDoctorByUsernameThisWeek(String username){
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
-                .orElseThrow(() -> new RuntimeException("Doctor not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found")) ;
 
         LocalDate today = LocalDate.now() ;
         LocalDate weekend = today.plusDays(6) ;
@@ -128,14 +132,14 @@ public class PatientService {
             SpecialtyName specialtyEnum = SpecialtyName.valueOf(specialtyName.toUpperCase());
             return doctorRepository.findBySpecialty_SpecialtyName(specialtyEnum) ;
         } catch (Exception e){
-            throw new RuntimeException("Invalid Specialty.") ;
+            throw new BadRequestException("Invalid Specialty.") ;
         }
     }
 
     public Patient updatePatient(String username , UserDTO newPatientDetails){
 
         Patient patient = patientRepository.findByPatientDetails_Username(username)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         String newUsername = newPatientDetails.getUsername() ;
         String newEmail = newPatientDetails.getEmail() ;
@@ -144,7 +148,7 @@ public class PatientService {
 
         if (newUsername == null || newEmail == null || newName == null
                 || newPassword == null){
-            throw new RuntimeException("Fields must not be empty.") ;
+            throw new BadRequestException("Fields must not be empty.") ;
         }
 
         patient.getPatientDetails().setUsername(newUsername) ;
@@ -155,16 +159,16 @@ public class PatientService {
         try {
             return patientRepository.save(patient);
         } catch (Exception e){
-            throw new RuntimeException("Invalid email format. Email or username is used.");
+            throw new BadRequestException("Invalid email format. Email or username is used.");
         }
     }
 
     public void cancelAppointment(String username, Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found.")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found.")) ;
 
         if (!appointment.getPatient().getPatientDetails().getUsername().equals(username)){
-            throw new RuntimeException("Cannot delete appointment for other patients.") ;
+            throw new AccessDeniedException("Cannot delete appointment for other patients.") ;
         }
 
         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
@@ -179,16 +183,16 @@ public class PatientService {
     public Prescription getPrescription(String username, Long appointmentId) {
 
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found.")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found.")) ;
 
         if (appointment.getPatient().getPatientDetails().getName().equals(username)){
-            throw new RuntimeException("You cannot view other patients appointments.") ;
+            throw new AccessDeniedException("You cannot view other patients appointments.") ;
         }
 
         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
 
         if (medicalReport == null || medicalReport.getPrescription() == null){
-            throw new RuntimeException("Prescription is not ready.") ;
+            throw new ResourceNotFoundException("Prescription is not ready.") ;
         }
 
         return medicalReport.getPrescription() ;
@@ -197,16 +201,16 @@ public class PatientService {
     public List<LabResult> getLabResults(String username, Long appointmentId) {
 
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found.")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found.")) ;
 
         if (appointment.getPatient().getPatientDetails().getName().equals(username)){
-            throw new RuntimeException("You cannot view other patients appointments.") ;
+            throw new AccessDeniedException("You cannot view other patients appointments.") ;
         }
 
         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;
 
         if (medicalReport == null || medicalReport.getLabResults() == null){
-            throw new RuntimeException("Lab results are not ready.") ;
+            throw new ResourceNotFoundException("Lab results are not ready.") ;
         }
 
         return medicalReport.getLabResults() ;

@@ -18,37 +18,24 @@ public class AuthenticationController {
 
     @PostMapping("/register_admin")
     public ResponseEntity<Object> registerAdmin(@RequestBody UserDTO admin){
-        try {
-            return ResponseEntity.ok(authenticationService.registerAdmin(admin));
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        return ResponseEntity.ok(authenticationService.registerAdmin(admin));
+
     }
 
     @PostMapping("/register_doctor")
     public ResponseEntity<Object> registerDoctor(@RequestBody DoctorDTO doctor){
-        try {
-            return ResponseEntity.ok(authenticationService.registerDoctor(doctor));
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        return ResponseEntity.ok(authenticationService.registerDoctor(doctor));
+
     }
 
     @PostMapping("/register_patient")
     public ResponseEntity<Object> registerPatient(@RequestBody UserDTO patinet){
-        try {
-            return ResponseEntity.ok(authenticationService.registerPatient(patinet));
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        return ResponseEntity.ok(authenticationService.registerPatient(patinet));
+
     }
 
     @PostMapping("/login")
     public ResponseEntity<Object> authenticate(@RequestBody AuthenticationRequest request){
-        try {
-            return ResponseEntity.ok(authenticationService.authenticate(request));
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }

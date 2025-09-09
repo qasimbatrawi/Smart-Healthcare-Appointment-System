@@ -4,6 +4,8 @@ import com.example.system.document.LabResult;
 import com.example.system.document.MedicalReport;
 import com.example.system.document.Prescription;
 import com.example.system.entity.Appointment;
+import com.example.system.exception.AccessDeniedException;
+import com.example.system.exception.ResourceNotFoundException;
 import com.example.system.repository.AppointmentRepository;
 import com.example.system.repository.MedicalReportRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +27,10 @@ public class DoctorService {
     public Appointment markAppointmentCompleted(String username, Long appointmentId) {
 
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found")) ;
 
         if (!appointment.getDoctor().getDoctorDetails().getUsername().equals(username)){
-            throw new RuntimeException("Cannot view appointments for other doctors.") ;
+            throw new AccessDeniedException("Cannot view appointments for other doctors.");
         }
 
         appointment.setCompleted(true);
@@ -42,11 +44,11 @@ public class DoctorService {
                 .orElseThrow(() -> new RuntimeException("Appointment not found")) ;
 
         if (!appointment.getDoctor().getDoctorDetails().getUsername().equals(username)){
-            throw new RuntimeException("Cannot view appointments for other doctors.") ;
+            throw new AccessDeniedException("Cannot view appointments for other doctors.") ;
         }
 
         if (labResult == null || labResult.getResult() == null || labResult.getTestName() == null){
-            throw new RuntimeException("Field must not be empty.") ;
+            throw new ResourceNotFoundException("Field must not be empty.") ;
         }
 
         labResult.setDate(LocalDate.now());
@@ -72,14 +74,14 @@ public class DoctorService {
     public MedicalReport newPrescription(String username, Long appointmentId, Prescription prescription) {
 
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found")) ;
 
         if (!appointment.getDoctor().getDoctorDetails().getUsername().equals(username)){
-            throw new RuntimeException("Cannot view appointments for other doctors.") ;
+            throw new AccessDeniedException("Cannot view appointments for other doctors.") ;
         }
 
         if (prescription == null || prescription.getNotes() == null){
-            throw new RuntimeException("Prescription must have notes.") ;
+            throw new ResourceNotFoundException("Prescription must have notes.") ;
         }
 
         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointmentId) ;

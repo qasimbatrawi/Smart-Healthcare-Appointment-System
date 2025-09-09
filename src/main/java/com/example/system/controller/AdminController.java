@@ -24,42 +24,26 @@ public class AdminController {
 
     @GetMapping("/doctor_username/{username}")
     public ResponseEntity<Object> getDoctorByUsername(@PathVariable String username){
-        try {
-            Doctor doctor = adminService.getDoctorByUsername(username);
-            return ResponseEntity.ok(doctor) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        Doctor doctor = adminService.getDoctorByUsername(username);
+        return ResponseEntity.ok(doctor) ;
     }
 
     @GetMapping("/doctor_specialty/{specialtyName}")
     public ResponseEntity<Object> getDoctorBySpecialty(@PathVariable String specialtyName){
-        try {
-            List<Doctor> doctors = adminService.getDoctorBySpecialty(specialtyName);
-            return ResponseEntity.ok(doctors) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        List<Doctor> doctors = adminService.getDoctorBySpecialty(specialtyName);
+        return ResponseEntity.ok(doctors) ;
     }
 
     @PatchMapping("/doctor/{username}")
     public ResponseEntity<Object> updateDoctorByUsername(@PathVariable String username , @RequestBody DoctorDTO newDoctorDetails){
-        try {
-            Doctor doctor = adminService.updateDoctorByUsername(username, newDoctorDetails);
-            return ResponseEntity.ok(doctor) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        Doctor doctor = adminService.updateDoctorByUsername(username, newDoctorDetails);
+        return ResponseEntity.ok(doctor) ;
     }
 
     @DeleteMapping("/doctor/{username}")
     public ResponseEntity<Object> deleteDoctor(@PathVariable String username){
-        try{
-            adminService.deleteDoctorByUsername(username) ;
-            return ResponseEntity.noContent().build() ;
-        } catch(RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        adminService.deleteDoctorByUsername(username) ;
+        return ResponseEntity.noContent().build() ;
     }
 
     @GetMapping("/all_patients")
@@ -70,11 +54,7 @@ public class AdminController {
 
     @GetMapping("/patient_username/{username}")
     public ResponseEntity<Object> getPatientByUsername(@PathVariable String username){
-        try {
-            Patient patient = adminService.getPatientByUsername(username);
-            return ResponseEntity.ok(patient) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        Patient patient = adminService.getPatientByUsername(username);
+        return ResponseEntity.ok(patient) ;
     }
 }

@@ -3,6 +3,8 @@ package com.example.system.service;
 import com.example.system.Enum.RoleName;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.User;
+import com.example.system.exception.BadRequestException;
+import com.example.system.exception.ResourceNotFoundException;
 import com.example.system.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class OwnerService {
         String newPassword = newOwnerDetails.getPassword() ;
 
         if (newUsername == null || newEmail == null || newName == null || newPassword == null){
-            throw new RuntimeException("Fields must not be empty.") ;
+            throw new ResourceNotFoundException("Fields must not be empty.") ;
         }
 
         owner.setUsername(newUsername) ;
@@ -41,7 +43,7 @@ public class OwnerService {
         try {
             return userRepository.save(owner);
         } catch (Exception e){
-            throw new RuntimeException("Invalid email format. Email or username is used.");
+            throw new BadRequestException("Invalid email format. Email or username is used.");
         }
     }
 
@@ -51,7 +53,7 @@ public class OwnerService {
 
     public User getAdminByUsername(String username){
         User user = userRepository.findByUsernameAndRole_RoleName(username, RoleName.ADMIN)
-                .orElseThrow(() -> new RuntimeException("Admin not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found")) ;
 
         return user ;
     }
@@ -59,7 +61,7 @@ public class OwnerService {
     public User updateAdminByUsername(String username , UserDTO newUserDetails){
 
         User user = userRepository.findByUsernameAndRole_RoleName(username, RoleName.ADMIN)
-                .orElseThrow(() -> new RuntimeException("Admin not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found")) ;
 
         String newUsername = newUserDetails.getUsername() ;
         String newEmail = newUserDetails.getEmail() ;
@@ -67,7 +69,7 @@ public class OwnerService {
         String newPassword = newUserDetails.getPassword() ;
 
         if (newUsername == null || newEmail == null || newName == null || newPassword == null){
-            throw new RuntimeException("Fields must not be empty.") ;
+            throw new BadRequestException("Fields must not be empty.") ;
         }
 
         user.setUsername(newUsername) ;
@@ -78,13 +80,13 @@ public class OwnerService {
         try {
             return userRepository.save(user);
         } catch (Exception e){
-            throw new RuntimeException("Invalid email format. Email or username is used.");
+            throw new BadRequestException("Invalid email format. Email or username is used.");
         }
     }
 
     public void deleteAdminByUsername(String username){
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Admin not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found"));
         userRepository.delete(user);
     }
 }

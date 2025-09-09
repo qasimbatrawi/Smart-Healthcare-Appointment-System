@@ -4,6 +4,8 @@ import com.example.system.Enum.SpecialtyName;
 import com.example.system.document.MedicalReport;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.*;
+import com.example.system.exception.BadRequestException;
+import com.example.system.exception.ResourceNotFoundException;
 import com.example.system.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,13 +33,13 @@ public class AdminService {
 
     public Doctor getDoctorByUsername(String username){
         return doctorRepository.findByDoctorDetails_Username(username)
-                .orElseThrow(() -> new RuntimeException("Doctor not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found.")) ;
     }
 
     public Doctor updateDoctorByUsername(String username , DoctorDTO newDoctorDetails){
 
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         String newUsername = newDoctorDetails.getUsername() ;
         String newEmail = newDoctorDetails.getEmail() ;
@@ -48,12 +50,12 @@ public class AdminService {
 
         if (newUsername == null || newEmail == null || newName == null
             || newPassword == null || newWorkDayStart == null || newWorkDayEnd == null){
-            throw new RuntimeException("Fields must not be empty.") ;
+            throw new BadRequestException("Fields must not be empty.") ;
         }
 
         if (newWorkDayStart.isAfter(newWorkDayEnd)
                 || newWorkDayStart.equals(newWorkDayEnd)){
-            throw new RuntimeException("Invalid work hours.") ;
+            throw new BadRequestException("Invalid work hours.") ;
         }
 
         // map entered specialties to objects
@@ -63,7 +65,7 @@ public class AdminService {
                     try {
                         return SpecialtyName.valueOf(s.toUpperCase());
                     } catch (Exception e){
-                        throw new RuntimeException("Invalid Specialty.") ;
+                        throw new BadRequestException("Invalid Specialty.") ;
                     }
                 }) // try to map to Enum
                 .map(specialty -> specialtyRepository.findBySpecialtyName(specialty)) // map to Specialty object
@@ -76,6 +78,7 @@ public class AdminService {
         doctor.getDoctorDetails().setPassword(newPassword) ;
         doctor.setWorkDayStart(newWorkDayStart);
         doctor.setWorkDayEnd(newWorkDayEnd);
+
 
         try {
             Doctor newDoctor = doctorRepository.save(doctor);
@@ -99,7 +102,7 @@ public class AdminService {
             return newDoctor;
 
         } catch (Exception e){
-            throw new RuntimeException("Invalid email format. Email or username is used.");
+            throw new BadRequestException("Invalid email format. Email or username is used.");
         }
     }
 
@@ -108,13 +111,13 @@ public class AdminService {
             SpecialtyName specialtyEnum = SpecialtyName.valueOf(specialtyName.toUpperCase());
             return doctorRepository.findBySpecialty_SpecialtyName(specialtyEnum) ;
         } catch (Exception e){
-            throw new RuntimeException("Invalid Specialty.") ;
+            throw new BadRequestException("Invalid Specialty.") ;
         }
     }
 
     public void deleteDoctorByUsername(String username){
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         List<Appointment> appointments = appointmentRepository.findByDoctor_DoctorDetails_Username(username) ;
 
@@ -134,6 +137,6 @@ public class AdminService {
 
     public Patient getPatientByUsername(String username){
         return patientRepository.findByPatientDetails_Username(username)
-                .orElseThrow(() -> new RuntimeException("Patient not found")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found")) ;
     }
 }

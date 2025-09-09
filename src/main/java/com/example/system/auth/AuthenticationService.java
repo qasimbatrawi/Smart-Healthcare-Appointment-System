@@ -7,9 +7,12 @@ import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.SpecialtyDTO;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.*;
+import com.example.system.exception.BadRequestException;
+import com.example.system.exception.ResourceNotFoundException;
 import com.example.system.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,7 +42,7 @@ public class AuthenticationService {
         String password = admin.getPassword();
 
         if (name == null || email == null || username == null || password == null){
-            throw new RuntimeException("Fields must not be empty") ;
+            throw new BadRequestException("Fields must not be empty") ;
         }
 
         User user = new User() ;
@@ -54,7 +57,7 @@ public class AuthenticationService {
         try {
             userRepository.save(user);
         } catch (Exception e){
-            throw new RuntimeException("Invalid email format. Email or username are used.") ;
+            throw new BadRequestException("Invalid email format. Email or username are used.") ;
         }
 
         var jwt = jwtService.generateToken(user) ;
@@ -74,7 +77,7 @@ public class AuthenticationService {
         LocalTime workEnd = request.getWorkDayEnd() ;
 
         if (name == null || email == null || username == null || password == null){
-            throw new RuntimeException("Fields must not be empty") ;
+            throw new BadRequestException("Fields must not be empty") ;
         }
 
         User user = new User() ;
@@ -90,12 +93,12 @@ public class AuthenticationService {
         doctor.setDoctorDetails(user);
 
         if (workStart == null || workEnd == null || specialties == null || specialties.isEmpty()){
-            throw new RuntimeException("Fields must not be empty") ;
+            throw new BadRequestException("Fields must not be empty") ;
         }
 
         if (workStart.isAfter(workEnd)
                 || workStart.equals(workEnd)){
-            throw new RuntimeException("Invalid work hours.") ;
+            throw new BadRequestException("Invalid work hours.") ;
         }
 
         Set<Specialty> newSpecialties = specialties.stream()
@@ -104,7 +107,7 @@ public class AuthenticationService {
                     try {
                         return SpecialtyName.valueOf(s.toUpperCase());
                     } catch (Exception e){
-                        throw new RuntimeException("Invalid Specialty.") ;
+                        throw new BadRequestException("Invalid Specialty.") ;
                     }
                 }) // try to map to Enum
                 .map(specialty -> specialtyRepository.findBySpecialtyName(specialty)) // map to Specialty object
@@ -118,7 +121,7 @@ public class AuthenticationService {
             userRepository.save(user);
             doctorRepository.save(doctor) ;
         } catch (Exception e){
-            throw new RuntimeException("Invalid email format. Email or username are used.") ;
+            throw new BadRequestException("Invalid email format. Email or username are used.") ;
         }
 
         var jwt = jwtService.generateToken(user) ;
@@ -135,7 +138,7 @@ public class AuthenticationService {
         String password = patinet.getPassword();
 
         if (name == null || email == null || username == null || password == null){
-            throw new RuntimeException("Fields must not be empty") ;
+            throw new BadRequestException("Fields must not be empty") ;
         }
 
         User user = new User() ;
@@ -154,7 +157,7 @@ public class AuthenticationService {
             userRepository.save(user);
             patientRepository.save(patient) ;
         } catch (Exception e){
-            throw new RuntimeException("Invalid email format. Email or username are used.") ;
+            throw new BadRequestException("Invalid email format. Email or username are used.") ;
         }
 
         var jwt = jwtService.generateToken(user) ;
@@ -170,10 +173,10 @@ public class AuthenticationService {
                     request.getPassword()
             ));
         } catch(Exception e){
-            throw new RuntimeException("Incorrect Password.") ;
+            throw new BadCredentialsException("Incorrect Password.") ;
         }
         var user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found.")) ;
+                .orElseThrow(() -> new ResourceNotFoundException("User not found.")) ;
 
         var jwt = jwtService.generateToken(user) ;
         return AuthenticationResponse.builder()

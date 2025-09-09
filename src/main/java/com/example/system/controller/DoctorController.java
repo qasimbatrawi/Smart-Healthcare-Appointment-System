@@ -21,45 +21,29 @@ public class DoctorController {
 
     @GetMapping("/today_appointment")
     public ResponseEntity<Object> getTodayAppointment(){
-        try {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            List<Appointment> appointments = doctorService.getTodayAppointment(username);
-            return ResponseEntity.ok().body(appointments) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Appointment> appointments = doctorService.getTodayAppointment(username);
+        return ResponseEntity.ok().body(appointments) ;
     }
 
     @PatchMapping("/completed_appointment/{appointmentId}")
     public ResponseEntity<Object> markAppointmentCompleted(@PathVariable Long appointmentId){
-        try {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            Appointment appointment = doctorService.markAppointmentCompleted(username, appointmentId);
-            return ResponseEntity.ok().body(appointment) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Appointment appointment = doctorService.markAppointmentCompleted(username, appointmentId);
+        return ResponseEntity.ok().body(appointment) ;
     }
 
     @PostMapping("/add_result/{appointmentId}")
     public ResponseEntity<Object> addLabResult(@PathVariable Long appointmentId, @RequestBody LabResult labResult){
-        try {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            MedicalReport medicalReport = doctorService.addLabResult(username, appointmentId, labResult);
-            return ResponseEntity.ok().body(medicalReport) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        MedicalReport medicalReport = doctorService.addLabResult(username, appointmentId, labResult);
+        return ResponseEntity.ok().body(medicalReport) ;
     }
 
     @PostMapping("/new_prescription/{appointmentId}")
     public ResponseEntity<Object> newPrescription(@PathVariable Long appointmentId, @RequestBody Prescription prescription){
-        try {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            MedicalReport medicalReport = doctorService.newPrescription(username, appointmentId, prescription);
-            return ResponseEntity.ok().body(medicalReport) ;
-        } catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage()) ;
-        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        MedicalReport medicalReport = doctorService.newPrescription(username, appointmentId, prescription);
+        return ResponseEntity.ok().body(medicalReport) ;
     }
 }
