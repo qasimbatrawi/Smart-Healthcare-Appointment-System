@@ -184,7 +184,7 @@ public class AuthenticationService {
                     .orElseThrow();
 
             if (doctor.getFreeze() == true){
-                throw new AccessDeniedException("Doctor account is frozen.") ;
+                throw new ResourceNotFoundException("User not found.") ;
             }
         }
 
