@@ -107,7 +107,7 @@ class PatientServiceTest {
     }
 
     @Test
-    public void testBookAppointment() {
+    public void testBookAppointmentSuccess() {
 
         AppointmentDTO appointmentDTO = new AppointmentDTO();
         appointmentDTO.setDoctorUsername("qasim_doctor1");
@@ -147,7 +147,7 @@ class PatientServiceTest {
     }
 
     @Test
-    public void testDoctorAvailableTime(){
+    public void testDoctorAvailableTimeSuccess(){
 
         when(doctorRepository.findByDoctorDetails_Username("qasim_doctor1"))
                 .thenReturn(Optional.of(doctor1));
@@ -180,7 +180,7 @@ class PatientServiceTest {
     }
 
     @Test
-    public void testTwoPatientsBookForTheSameDoctorWithOverlappingTime(){
+    public void testTwoPatientsBookForTheSameDoctorWithOverlappingTimeRejected(){
 
         AppointmentDTO appointmentDTO1 = new AppointmentDTO();
         appointmentDTO1.setDoctorUsername("qasim_doctor1");
@@ -258,7 +258,7 @@ class PatientServiceTest {
     }
 
     @Test
-    public void testSamePatientBooksForTwoDoctorsWithOverlappingTime(){
+    public void testSamePatientBooksForTwoDoctorsWithOverlappingTimeRejected(){
 
         AppointmentDTO appointmentDTO1 = new AppointmentDTO();
         appointmentDTO1.setDoctorUsername("qasim_doctor1");

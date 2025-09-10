@@ -19,13 +19,11 @@ public class AuthenticationController {
     @PostMapping("/register_admin")
     public ResponseEntity<Object> registerAdmin(@RequestBody UserDTO admin){
         return ResponseEntity.ok(authenticationService.registerAdmin(admin));
-
     }
 
     @PostMapping("/register_doctor")
     public ResponseEntity<Object> registerDoctor(@RequestBody DoctorDTO doctor){
         return ResponseEntity.ok(authenticationService.registerDoctor(doctor));
-
     }
 
     @PostMapping("/register_patient")
