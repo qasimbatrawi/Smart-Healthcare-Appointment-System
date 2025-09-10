@@ -22,3 +22,5 @@ Access to the system is controlled by roles. Owners have full control of the sys
 and patients. Admins can manage doctors and patients. Doctors can manage their appointments and prescriptions. Patients can book appointments and view prescriptions.  
 
 To run the project, you need Java 17+, Maven 3+, and both MySQL and MongoDB installed on your device.
+
+You can test the system in Postman using the APIs listed in the APIs.txt file.
