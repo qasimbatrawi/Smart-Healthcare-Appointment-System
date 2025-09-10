@@ -40,6 +40,18 @@ public class AdminController {
         return ResponseEntity.ok(doctor) ;
     }
 
+    @PatchMapping("/doctor/freeze/{username}")
+    public ResponseEntity<Object> freezeDoctorAccount(@PathVariable String username){
+        String result = adminService.freezeDoctorAccount(username);
+        return ResponseEntity.ok(result) ;
+    }
+
+    @PatchMapping("/doctor/unfreeze/{username}")
+    public ResponseEntity<Object> unFreezeDoctorAccount(@PathVariable String username){
+        String result = adminService.unFreezeDoctorAccount(username);
+        return ResponseEntity.ok(result) ;
+    }
+
     @DeleteMapping("/doctor/{username}")
     public ResponseEntity<Object> deleteDoctor(@PathVariable String username){
         adminService.deleteDoctorByUsername(username) ;

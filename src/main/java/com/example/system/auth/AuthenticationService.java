@@ -7,6 +7,7 @@ import com.example.system.dto.DoctorDTO;
 import com.example.system.dto.SpecialtyDTO;
 import com.example.system.dto.UserDTO;
 import com.example.system.entity.*;
+import com.example.system.exception.AccessDeniedException;
 import com.example.system.exception.BadRequestException;
 import com.example.system.exception.ResourceNotFoundException;
 import com.example.system.repository.*;
@@ -177,6 +178,15 @@ public class AuthenticationService {
         }
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found.")) ;
+
+        if (user.getRole().getRoleName().name().equals("DOCTOR")){
+            Doctor doctor = doctorRepository.findByDoctorDetails_Username(request.getUsername())
+                    .orElseThrow();
+
+            if (doctor.getFreeze() == true){
+                throw new AccessDeniedException("Doctor account is frozen.") ;
+            }
+        }
 
         var jwt = jwtService.generateToken(user) ;
         return AuthenticationResponse.builder()

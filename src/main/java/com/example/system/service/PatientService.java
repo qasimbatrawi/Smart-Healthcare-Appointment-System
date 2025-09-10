@@ -52,6 +52,10 @@ public class PatientService {
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(doctorUsername)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found.")) ;
 
+        if (doctor.getFreeze() == true){
+            throw new ResourceNotFoundException("Doctor not found.") ;
+        }
+
         Patient patient = patientRepository.findByPatientDetails_Username(patientUsername)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found.")) ;
 
@@ -88,6 +92,10 @@ public class PatientService {
     public Map<LocalDate, List<Map<LocalTime, LocalTime>>> getAvailableTimeForDoctorByUsernameThisWeek(String username){
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found")) ;
+
+        if (doctor.getFreeze() == true){
+            throw new ResourceNotFoundException("Doctor not found.") ;
+        }
 
         LocalDate today = LocalDate.now() ;
         LocalDate weekend = today.plusDays(6) ;
@@ -130,7 +138,10 @@ public class PatientService {
     public List<Doctor> getDoctorBySpecialty(String specialtyName){
         try {
             SpecialtyName specialtyEnum = SpecialtyName.valueOf(specialtyName.toUpperCase());
-            return doctorRepository.findBySpecialty_SpecialtyName(specialtyEnum) ;
+            return doctorRepository.findBySpecialty_SpecialtyName(specialtyEnum)
+                    .stream()
+                    .filter(doctor -> doctor.getFreeze() == false)
+                    .toList();
         } catch (Exception e){
             throw new BadRequestException("Invalid Specialty.") ;
         }

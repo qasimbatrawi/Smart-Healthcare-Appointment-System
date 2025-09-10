@@ -1,0 +1,202 @@
+
+
+------------------------------------------------------OWNER Role--------------------------------------------
+
+
+GET: http://localhost:8080/owner
+
+
+
+GET: http://localhost:8080/owner/all_admins
+
+
+
+GET: http://localhost:8080/owner/admin/{username}
+
+
+
+PATCH: http://localhost:8080/owner
+{
+    "name": "Qasim",
+    "email": "qasimowner@gmail.com",
+    "password": "qasim1234",
+    "username": "qasimowner"
+}
+
+
+
+PATCH: http://localhost:8080/owner/admin/{username}
+{
+    "name": "Qasim",
+    "email": "qasimadmin@gmail.com",
+    "password": "qasim1234",
+    "username": "qasimadmin"
+}
+
+
+
+DELETE: http://localhost:8080/owner/admin/{username}
+
+
+------------------------------------------------------OWNER & ADMIN Roles--------------------------------------------
+
+
+POST: http://localhost:8080/system/auth/register_admin
+{
+    "name": "Qasim",
+    "email": "qasimadmin@gmail.com",
+    "password": "qasim1234",
+    "username": "qasimadmin"
+}
+
+
+
+POST: http://localhost:8080/system/auth/register_doctor
+{
+    "name": "Qasim",
+    "email": "qasimdoctor@gmail.com",
+    "password": "qasim1234",
+    "username": "qasimdoctor",
+    "workDayStart": "09:00",
+    "workDayEnd": "15:00",
+    "specialties": [ {"specialtyName": "BAD"} ]
+}
+
+
+
+
+POST: http://localhost:8080/system/auth/register_patient
+{
+    "name": "Qasim",
+    "email": "qasimpatient@gmail.com",
+    "password": "qasim1234",
+    "username": "qasimpatient"
+}
+
+
+
+GET: http://localhost:8080/admin/all_doctors
+
+
+
+GET: http://localhost:8080/admin/doctor_username/{username}
+
+
+
+GET: http://localhost:8080/admin/doctor_specialty/{specialtyName}
+
+
+
+GET: http://localhost:8080/admin/all_patients
+
+
+
+GET: http://localhost:8080/admin/patient_username/{username}
+
+
+
+PATCH: http://localhost:8080/admin/doctor/{username}
+{
+    "name": "Qasim",
+    "email": "qasimdoctor@gmail.com",
+    "password": "qasim1234",
+    "username": "qasimdoctor",
+    "workDayStart": "09:00",
+    "workDayEnd": "15:00",
+    "specialties": [ "BAD", "GOOD" ]
+}
+
+
+
+PATCH: http://localhost:8080/admin/doctor/freeze/{username}
+
+
+
+PATCH: http://localhost:8080/admin/doctor/unfreeze/{username}
+
+
+
+DELETE: http://localhost:8080/admin/doctor/{username}
+
+
+------------------------------------------------------OWNER, ADMIN & DOCTOR Roles--------------------------------------------
+
+
+POST: http://localhost:8080/doctor/add_result/{appointmentId}
+{
+    "testName": "test",
+    "result": "good",
+    "time": "09:00",
+    "date": "2025-10-19"
+}
+
+
+
+
+POST: http://localhost:8080/doctor/new_prescription/{appointmentId}
+{
+    "notes": "take these medicines",
+    "medicines": ["acamol", "paracetamol"]
+}
+
+
+
+GET: http://localhost:8080/doctor/today_appointments
+
+
+
+PATCH: http://localhost:8080/doctor/completed_appointment/{appointmentId}
+
+
+------------------------------------------------------PATIENT Role--------------------------------------------
+
+
+POST: http://localhost:8080/patient/book_appointment
+{
+    "doctorUsername": "qasimdoctor",
+    "date": "2025-12-04",
+    "startTime": "09:00",
+    "endTime": "10:00"
+}
+
+
+
+
+GET: http://localhost:8080/patient/doctor_time/{username}
+
+
+
+GET: http://localhost:8080/patient/doctor_specialty/{specialtyName}
+
+
+
+GET: http://localhost:8080/patient/prescription/{appointmentId}
+
+
+
+GET: http://localhost:8080/patient/lab_results/{appointmentId}
+
+
+
+PATCH: http://localhost:8080/patient
+{
+    "name": "Qasim",
+    "email": "qasimpatient@gmail.com",
+    "password": "qasim1234",
+    "username": "qasimpatient"
+}
+
+
+
+DELETE: http://localhost:8080/patient/appointment/{appointmentId}
+
+
+------------------------------------------------------Any Role--------------------------------------------
+
+
+POST: http://localhost:8080/system/auth/login
+{
+    "password": "qasim1234",
+    "username": "qasimpatient"
+}
+

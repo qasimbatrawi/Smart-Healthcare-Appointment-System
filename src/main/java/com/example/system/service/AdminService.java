@@ -4,6 +4,7 @@ import com.example.system.Enum.SpecialtyName;
 import com.example.system.document.MedicalReport;
 import com.example.system.dto.DoctorDTO;
 import com.example.system.entity.*;
+import com.example.system.exception.AccessDeniedException;
 import com.example.system.exception.BadRequestException;
 import com.example.system.exception.ResourceNotFoundException;
 import com.example.system.repository.*;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
@@ -28,18 +30,31 @@ public class AdminService {
     private final MedicalReportRepository medicalReportRepository ;
 
     public List<Doctor> getAllDoctors(){
-        return doctorRepository.findAll() ;
+        return doctorRepository.findAll()
+                .stream()
+                .filter(doctor -> doctor.getFreeze() == false)
+                .toList();
     }
 
     public Doctor getDoctorByUsername(String username){
-        return doctorRepository.findByDoctorDetails_Username(username)
+        Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found.")) ;
+
+        if (doctor.getFreeze() == true){
+            throw new AccessDeniedException("Doctor account is frozen.") ;
+        }
+
+        return doctor ;
     }
 
     public Doctor updateDoctorByUsername(String username , DoctorDTO newDoctorDetails){
 
         Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+        if (doctor.getFreeze() == true){
+            throw new AccessDeniedException("Doctor account is frozen.") ;
+        }
 
         String newUsername = newDoctorDetails.getUsername() ;
         String newEmail = newDoctorDetails.getEmail() ;
@@ -79,7 +94,6 @@ public class AdminService {
         doctor.setWorkDayStart(newWorkDayStart);
         doctor.setWorkDayEnd(newWorkDayEnd);
 
-
         try {
             Doctor newDoctor = doctorRepository.save(doctor);
 
@@ -88,8 +102,9 @@ public class AdminService {
 
             appointments.stream()
                     .filter(appointment ->
-                            appointment.getStartTime().toLocalTime().isBefore(newDoctor.getWorkDayStart()) ||
-                                    appointment.getEndTime().toLocalTime().isAfter(newDoctor.getWorkDayEnd())
+                            (appointment.getStartTime().toLocalTime().isBefore(newDoctor.getWorkDayStart()) ||
+                                    appointment.getEndTime().toLocalTime().isAfter(newDoctor.getWorkDayEnd()))
+                            && !appointment.getStartTime().toLocalDate().isBefore(LocalDate.now())
                     )
                     .forEach(appointment -> {
                         MedicalReport medicalReport = medicalReportRepository.findByAppointmentId(appointment.getId());
@@ -109,10 +124,49 @@ public class AdminService {
     public List<Doctor> getDoctorBySpecialty(String specialtyName){
         try {
             SpecialtyName specialtyEnum = SpecialtyName.valueOf(specialtyName.toUpperCase());
-            return doctorRepository.findBySpecialty_SpecialtyName(specialtyEnum) ;
+            return doctorRepository.findBySpecialty_SpecialtyName(specialtyEnum)
+                    .stream()
+                    .filter(doctor -> doctor.getFreeze() == false)
+                    .toList();
         } catch (Exception e){
             throw new BadRequestException("Invalid Specialty.") ;
         }
+    }
+
+    public String freezeDoctorAccount(String username){
+        Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+        String result ;
+        if (doctor.getFreeze() == true){
+            result = "Dr. " + username + " account is already frozen." ;
+        }
+        else{
+            result = "Dr. " + username + " account has been frozen." ;
+        }
+        doctor.setFreeze(true);
+
+        doctorRepository.save(doctor) ;
+
+        return result ;
+    }
+
+    public String unFreezeDoctorAccount(String username) {
+        Doctor doctor = doctorRepository.findByDoctorDetails_Username(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
+
+        String result ;
+        if (doctor.getFreeze() == false){
+            result = "Dr. " + username + " account is already unfrozen." ;
+        }
+        else{
+            result = "Dr. " + username + " account has been unfrozen." ;
+        }
+        doctor.setFreeze(false);
+
+        doctorRepository.save(doctor) ;
+
+        return result ;
     }
 
     public void deleteDoctorByUsername(String username){

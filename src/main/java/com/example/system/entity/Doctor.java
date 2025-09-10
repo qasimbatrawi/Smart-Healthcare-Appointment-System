@@ -5,7 +5,6 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cache;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -38,6 +37,9 @@ public class Doctor {
 
     @Column(nullable = false)
     private LocalTime workDayEnd ;
+
+    @Column(nullable = false)
+    private Boolean freeze = false;
 
     public boolean isAvailable(LocalDateTime from , LocalDateTime to , List<Appointment> appointments){
 
