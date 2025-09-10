@@ -1,4 +1,4 @@
-# 🏥 Medical Appointment Management System  
+# Smart Healthcare Appointment System
 
 This project is a Spring Boot application designed to manage doctors, patients, appointments, specialties, and prescriptions. 
 It provides a secure system where users can authenticate using JWT-based authentication, and role-based access control is enforced for Owners, 
