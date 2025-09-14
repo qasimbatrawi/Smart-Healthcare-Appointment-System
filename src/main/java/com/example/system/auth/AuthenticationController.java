@@ -16,17 +16,17 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService ;
 
-    @PostMapping("/register_admin")
+    @PostMapping("/register/admin")
     public ResponseEntity<Object> registerAdmin(@RequestBody UserDTO admin){
         return ResponseEntity.ok(authenticationService.registerAdmin(admin));
     }
 
-    @PostMapping("/register_doctor")
+    @PostMapping("/register/doctor")
     public ResponseEntity<Object> registerDoctor(@RequestBody DoctorDTO doctor){
         return ResponseEntity.ok(authenticationService.registerDoctor(doctor));
     }
 
-    @PostMapping("/register_patient")
+    @PostMapping("/register/patient")
     public ResponseEntity<Object> registerPatient(@RequestBody UserDTO patinet){
         return ResponseEntity.ok(authenticationService.registerPatient(patinet));
 

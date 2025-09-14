@@ -27,7 +27,7 @@ public class OwnerController {
         return ResponseEntity.ok(user) ;
     }
 
-    @GetMapping("/all_admins")
+    @GetMapping("/admins")
     public List<User> getAllAdmins(){
         return ownerService.getAllAdmins() ;
     }

@@ -7,7 +7,7 @@ GET: http://localhost:8080/owner
 
 
 
-GET: http://localhost:8080/owner/all_admins
+GET: http://localhost:8080/owner/admins
 
 
 
@@ -41,7 +41,7 @@ DELETE: http://localhost:8080/owner/admin/{username}
 ------------------------------------------------------OWNER & ADMIN Roles--------------------------------------------
 
 
-POST: http://localhost:8080/system/auth/register_admin
+POST: http://localhost:8080/system/auth/register/admin
 {
     "name": "Qasim",
     "email": "qasimadmin@gmail.com",
@@ -51,7 +51,7 @@ POST: http://localhost:8080/system/auth/register_admin
 
 
 
-POST: http://localhost:8080/system/auth/register_doctor
+POST: http://localhost:8080/system/auth/register/doctor
 {
     "name": "Qasim",
     "email": "qasimdoctor@gmail.com",
@@ -65,7 +65,7 @@ POST: http://localhost:8080/system/auth/register_doctor
 
 
 
-POST: http://localhost:8080/system/auth/register_patient
+POST: http://localhost:8080/system/auth/register/patient
 {
     "name": "Qasim",
     "email": "qasimpatient@gmail.com",
@@ -75,23 +75,23 @@ POST: http://localhost:8080/system/auth/register_patient
 
 
 
-GET: http://localhost:8080/admin/all_doctors
+GET: http://localhost:8080/admin/doctors
 
 
 
-GET: http://localhost:8080/admin/doctor_username/{username}
+GET: http://localhost:8080/admin/doctor/username/{username}
 
 
 
-GET: http://localhost:8080/admin/doctor_specialty/{specialtyName}
+GET: http://localhost:8080/admin/doctor/specialty/{specialtyName}
 
 
 
-GET: http://localhost:8080/admin/all_patients
+GET: http://localhost:8080/admin/patients
 
 
 
-GET: http://localhost:8080/admin/patient_username/{username}
+GET: http://localhost:8080/admin/patient/username/{username}
 
 
 
@@ -122,7 +122,7 @@ DELETE: http://localhost:8080/admin/doctor/{username}
 ------------------------------------------------------OWNER, ADMIN & DOCTOR Roles--------------------------------------------
 
 
-POST: http://localhost:8080/doctor/add_result/{appointmentId}
+POST: http://localhost:8080/doctor/add-result/{appointmentId}
 {
     "testName": "test",
     "result": "good",
@@ -133,7 +133,7 @@ POST: http://localhost:8080/doctor/add_result/{appointmentId}
 
 
 
-POST: http://localhost:8080/doctor/new_prescription/{appointmentId}
+POST: http://localhost:8080/doctor/new-prescription/{appointmentId}
 {
     "notes": "take these medicines",
     "medicines": ["acamol", "paracetamol"]
@@ -141,17 +141,17 @@ POST: http://localhost:8080/doctor/new_prescription/{appointmentId}
 
 
 
-GET: http://localhost:8080/doctor/today_appointments
+GET: http://localhost:8080/doctor/today-appointments
 
 
 
-PATCH: http://localhost:8080/doctor/completed_appointment/{appointmentId}
+PATCH: http://localhost:8080/doctor/completed-appointment/{appointmentId}
 
 
 ------------------------------------------------------PATIENT Role--------------------------------------------
 
 
-POST: http://localhost:8080/patient/book_appointment
+POST: http://localhost:8080/patient/book-appointment
 {
     "doctorUsername": "qasimdoctor",
     "date": "2025-12-04",
@@ -162,11 +162,11 @@ POST: http://localhost:8080/patient/book_appointment
 
 
 
-GET: http://localhost:8080/patient/doctor_time/{username}
+GET: http://localhost:8080/patient/doctor-time/{username}
 
 
 
-GET: http://localhost:8080/patient/doctor_specialty/{specialtyName}
+GET: http://localhost:8080/patient/doctor/specialty/{specialtyName}
 
 
 
@@ -174,7 +174,7 @@ GET: http://localhost:8080/patient/prescription/{appointmentId}
 
 
 
-GET: http://localhost:8080/patient/lab_results/{appointmentId}
+GET: http://localhost:8080/patient/lab-results/{appointmentId}
 
 
 

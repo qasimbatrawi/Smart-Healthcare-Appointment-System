@@ -17,18 +17,18 @@ public class AdminController {
 
     private final AdminService adminService ;
 
-    @GetMapping("/all_doctors")
+    @GetMapping("/doctors")
     public List<Doctor> getAllDoctors(){
         return adminService.getAllDoctors() ;
     }
 
-    @GetMapping("/doctor_username/{username}")
+    @GetMapping("/doctor/username/{username}")
     public ResponseEntity<Object> getDoctorByUsername(@PathVariable String username){
         Doctor doctor = adminService.getDoctorByUsername(username);
         return ResponseEntity.ok(doctor) ;
     }
 
-    @GetMapping("/doctor_specialty/{specialtyName}")
+    @GetMapping("/doctor/specialty/{specialtyName}")
     public ResponseEntity<Object> getDoctorBySpecialty(@PathVariable String specialtyName){
         List<Doctor> doctors = adminService.getDoctorBySpecialty(specialtyName);
         return ResponseEntity.ok(doctors) ;
@@ -58,13 +58,13 @@ public class AdminController {
         return ResponseEntity.noContent().build() ;
     }
 
-    @GetMapping("/all_patients")
+    @GetMapping("/patients")
     public ResponseEntity<Object> getAllPatients(){
         List<Patient> patients = adminService.getAllPatients();
         return ResponseEntity.ok(patients) ;
     }
 
-    @GetMapping("/patient_username/{username}")
+    @GetMapping("/patient/username/{username}")
     public ResponseEntity<Object> getPatientByUsername(@PathVariable String username){
         Patient patient = adminService.getPatientByUsername(username);
         return ResponseEntity.ok(patient) ;

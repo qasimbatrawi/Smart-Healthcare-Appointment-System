@@ -19,28 +19,28 @@ public class DoctorController {
 
     private final DoctorService doctorService ;
 
-    @GetMapping("/today_appointment")
+    @GetMapping("/today-appointment")
     public ResponseEntity<Object> getTodayAppointment(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Appointment> appointments = doctorService.getTodayAppointment(username);
         return ResponseEntity.ok().body(appointments) ;
     }
 
-    @PatchMapping("/completed_appointment/{appointmentId}")
+    @PatchMapping("/completed-appointment/{appointmentId}")
     public ResponseEntity<Object> markAppointmentCompleted(@PathVariable Long appointmentId){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Appointment appointment = doctorService.markAppointmentCompleted(username, appointmentId);
         return ResponseEntity.ok().body(appointment) ;
     }
 
-    @PostMapping("/add_result/{appointmentId}")
+    @PostMapping("/add-result/{appointmentId}")
     public ResponseEntity<Object> addLabResult(@PathVariable Long appointmentId, @RequestBody LabResult labResult){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         MedicalReport medicalReport = doctorService.addLabResult(username, appointmentId, labResult);
         return ResponseEntity.ok().body(medicalReport) ;
     }
 
-    @PostMapping("/new_prescription/{appointmentId}")
+    @PostMapping("/new-prescription/{appointmentId}")
     public ResponseEntity<Object> newPrescription(@PathVariable Long appointmentId, @RequestBody Prescription prescription){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         MedicalReport medicalReport = doctorService.newPrescription(username, appointmentId, prescription);

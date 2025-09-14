@@ -25,20 +25,20 @@ public class PatientController {
 
     private final PatientService patientService ;
 
-    @PostMapping("/book_appointment")
+    @PostMapping("/book-appointment")
     public ResponseEntity<Object> bookAppointment(@RequestBody AppointmentDTO appointment){
         String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
         Appointment apt = patientService.bookAppointment(username, appointment);
         return ResponseEntity.ok(apt) ;
     }
 
-    @GetMapping("/doctor_time/{username}")
+    @GetMapping("/doctor-time/{username}")
     public ResponseEntity<Object> getAvailableTimeForDoctorByUsernameThisWeek(@PathVariable String username){
         Map<LocalDate, List<Map<LocalTime, LocalTime>>> doctor = patientService.getAvailableTimeForDoctorByUsernameThisWeek(username);
         return ResponseEntity.ok(doctor) ;
     }
 
-    @GetMapping("/doctor_specialty/{specialtyName}")
+    @GetMapping("/doctor/specialty/{specialtyName}")
     public ResponseEntity<Object> getDoctorBySpecialty(@PathVariable String specialtyName){
         List<Doctor> doctors = patientService.getDoctorBySpecialty(specialtyName);
         return ResponseEntity.ok(doctors) ;
@@ -51,7 +51,7 @@ public class PatientController {
         return ResponseEntity.ok(prescription) ;
     }
 
-    @GetMapping("/lab_results/{appointmentId}")
+    @GetMapping("/lab-results/{appointmentId}")
     public ResponseEntity<Object> getLabResults(@PathVariable Long appointmentId){
         String username = SecurityContextHolder.getContext().getAuthentication().getName() ;
         List<LabResult> labResults = patientService.getLabResults(username, appointmentId);
