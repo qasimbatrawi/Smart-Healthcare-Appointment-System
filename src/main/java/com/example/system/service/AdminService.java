@@ -146,6 +146,15 @@ public class AdminService {
         }
         doctor.setFreeze(true);
 
+        List<Appointment> appointments = appointmentRepository.findByDoctor_DoctorDetails_Username(username) ;
+
+        appointments.forEach(appointment -> {
+            MedicalReport md = medicalReportRepository.findByAppointmentId(appointment.getId()) ;
+            medicalReportRepository.delete(md);
+        });
+
+        appointments.forEach(appointmentRepository::delete);
+
         doctorRepository.save(doctor) ;
 
         return result ;
