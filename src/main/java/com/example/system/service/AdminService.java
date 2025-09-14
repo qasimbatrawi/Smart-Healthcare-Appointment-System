@@ -164,6 +164,20 @@ public class AdminService {
         }
         doctor.setFreeze(false);
 
+        List<Appointment> appointments = appointmentRepository.findByDoctor_DoctorDetails_Username(username)
+                .stream()
+                .filter(appointment -> {
+                    return !appointment.getStartTime().toLocalDate().isBefore(LocalDate.now()) ;
+                })
+                .toList();
+
+        appointments.forEach(appointment -> {
+            MedicalReport md = medicalReportRepository.findByAppointmentId(appointment.getId()) ;
+            medicalReportRepository.delete(md);
+        });
+
+        appointments.forEach(appointmentRepository::delete);
+
         doctorRepository.save(doctor) ;
 
         return result ;
