@@ -63,8 +63,8 @@ public class SystemApplication implements CommandLineRunner{
 			User owner = new User();
 			owner.setName("Qasim Batrawi");
 			owner.setEmail("qasim123batrawi@gmail.com");
-			owner.setUsername("qasimbatrawi_04");
-			owner.setPassword(passwordEncoder.encode("100200300"));
+			owner.setUsername(System.getenv("OWNER_USERNAME"));
+			owner.setPassword(passwordEncoder.encode(System.getenv("OWNER_PASSWORD")));
 			owner.setRole(roleRepository.findByRoleName(RoleName.OWNER));
 			userRepository.save(owner);
 		}

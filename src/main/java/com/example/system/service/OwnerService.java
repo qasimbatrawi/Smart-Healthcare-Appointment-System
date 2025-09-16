@@ -19,12 +19,12 @@ public class OwnerService {
     private final UserRepository userRepository ;
 
     public User getOwner(){
-        return userRepository.findByRole_RoleName(RoleName.OWNER).getFirst() ;
+        return userRepository.findByRole_RoleName(RoleName.OWNER).get(0) ;
     }
 
     public User updateOwner(UserDTO newOwnerDetails){
 
-        User owner = userRepository.findByRole_RoleName(RoleName.OWNER).getFirst() ;
+        User owner = userRepository.findByRole_RoleName(RoleName.OWNER).get(0) ;
 
         String newUsername = newOwnerDetails.getUsername() ;
         String newEmail = newOwnerDetails.getEmail() ;

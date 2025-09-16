@@ -170,7 +170,7 @@ class PatientServiceTest {
         assertNotNull(result);
         assertTrue(result.containsKey(LocalDate.now().plusDays(1)));
 
-        Map<LocalTime, LocalTime> slot = result.get(LocalDate.now().plusDays(1)).getFirst();
+        Map<LocalTime, LocalTime> slot = result.get(LocalDate.now().plusDays(1)).get(0);
 
         LocalTime firstAvailableTimeStart = slot.keySet().iterator().next();
         LocalTime firstAvailableTimeEnd = slot.values().iterator().next();
