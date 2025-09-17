@@ -24,9 +24,10 @@ and patients. Admins can manage doctors and patients. Doctors can manage their a
 To run the project, you need Java 17+, Maven 3+, and both MySQL and MongoDB installed on your device.
 
 To test the system, you can clone the repository using **git clone https://github.com/qasimbatrawi/Smart-Healthcare-Appointment-System** . 
-After that, you need to update the values inside the **application.properties** and **docker-compose.yml** files with real values.
-Then, run the system using the Maven command **mvn spring-boot:run**. Then, you can test the APIs provided in the file APIs.txt using 
+After that, you need to update the values inside the **application.properties**, **docker-compose.yml**, **SystemApplication.java** and **JwtService.java** files with real values.
+Then, run the system using the Maven commands **mvn clean package** and **mvn spring-boot:run**. Then, you can test the APIs provided in the file APIs.txt using 
 Swagger at **http://localhost:8080/swagger-ui/index.html#/** .
 
 Another simple way to test the system without installing the required software is to use Docker. First, install Docker on your system, then pull the image using **docker 
-pull qasimbatrawi/healthcare-system:latest** and run it using **docker-compose up -d**. After that, you can test the APIs using Swagger at **http://localhost:8080/swagger-ui/index.html#/** .
+pull qasimbatrawi/healthcare-system:latest** and run it using **docker run qasimbatrawi/healthcare-system:latest**, but you need first to have and run both mongo and mysql images, and specify the enviroment variables for each. 
+After that, you can test the APIs using Swagger at **http://localhost:8080/swagger-ui/index.html#/** .
