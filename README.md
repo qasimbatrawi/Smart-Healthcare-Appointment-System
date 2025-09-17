@@ -28,5 +28,5 @@ After that, you need to update the values inside the **application.properties** 
 Then, run the system using the Maven command **mvn spring-boot:run**. Then, you can test the APIs provided in the file APIs.txt using 
 Swagger at **http://localhost:8080/swagger-ui/index.html#/** .
 
-Another simple way to test the system without installing the required software is to use Docker. First, install Docker on your system, then pull the container using **docker 
+Another simple way to test the system without installing the required software is to use Docker. First, install Docker on your system, then pull the image using **docker 
 pull qasimbatrawi/healthcare-system:latest** and run it using **docker-compose up -d**. After that, you can test the APIs using Swagger at **http://localhost:8080/swagger-ui/index.html#/** .
